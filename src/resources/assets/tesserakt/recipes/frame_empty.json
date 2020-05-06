@@ -1,0 +1,28 @@
+{
+    "type": "minecraft:crafting_shaped",
+    "pattern":
+    [
+        "axa",
+        "x x",
+        "axa"
+    ],
+    "key":
+    {
+        "a":
+        {
+            "type": "forge:ore_dict",
+            "ore": "ingotEnderium"
+        },
+        "x":
+        {
+             "type": "forge:ore_dict",
+            "ore": "blockGlassHardened"
+        }
+    },
+    "result":
+    {
+        "item": "tesserakt:frame_empty",
+        "count": 1,
+        "data": 0
+    }
+}

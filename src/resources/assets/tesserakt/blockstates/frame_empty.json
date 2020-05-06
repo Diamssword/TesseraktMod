@@ -1,0 +1,16 @@
+{
+  "forge_marker": 1,
+  "defaults": {
+    "model": "tesserakt:tesserakt",
+	"textures": {"0": "tesserakt:blocks/frame"}
+  },
+  "variants": {
+    "inventory": [{}],
+	"filled": {
+	"0" : {},
+	"1" : {"submodel":"tesserakt:tesserakt_inside_1"},
+	"2" : {"submodel":"tesserakt:tesserakt_inside_2"},
+	"3" : {"submodel":"tesserakt:tesserakt_inside_3"}
+	}
+  }
+}

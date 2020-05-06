@@ -1,0 +1,15 @@
+{
+  "forge_marker": 1,
+  "defaults": {
+    "model": "tesserakt:tesserakt"
+  },
+  "variants": {
+    "inventory": [{"submodel":"tesserakt:tesserakt_inside","textures": {
+				"fluid": "tesserakt:blocks/fluid_sky"
+			}}],
+	"connected": {
+	"false" : {"textures": {"0": "tesserakt:blocks/tesserakt_off"}},
+	"true" : {}
+	}
+  }
+}

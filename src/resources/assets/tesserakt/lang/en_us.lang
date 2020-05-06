@@ -1,0 +1,8 @@
+
+language.name=English
+language.region=United States
+language.code=en_us
+itemGroup.tesserakt=Tesserakt
+tile.tesserakt.tesserakt.name=Tesserakt
+tile.tesserakt.frame_empty.name=Tesserakt Frame (Empty)
+tile.tesserakt.frame_full.name=Tesserakt Frame (Full)
