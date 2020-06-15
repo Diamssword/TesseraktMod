@@ -1,7 +1,8 @@
 package com.diamssword.tesserakt;
 
+import com.diamssword.tesserakt.dimension.BagajerumDimension;
+
 import net.minecraft.util.text.translation.I18n;
-import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
@@ -9,12 +10,11 @@ import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 public class CommonProxy {
 
 	public void preInit(FMLPreInitializationEvent e) {
-		Main.config = new Configuration(e.getSuggestedConfigurationFile());
 	
 	}
 
 	public void init(FMLInitializationEvent e) {
-
+		BagajerumDimension.init();
 	}
 
 	public void postInit(FMLPostInitializationEvent e) {

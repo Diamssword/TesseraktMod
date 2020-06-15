@@ -89,19 +89,6 @@ public class TesseraktBlock extends Block{
 	public TesseraktTile getTileEntity(IBlockAccess world, BlockPos pos) {
 		return (TesseraktTile)world.getTileEntity(pos);
 	}
-	/*@SuppressWarnings("deprecation")
-	@Override
-	public List<ItemStack> getDrops(IBlockAccess world, BlockPos pos, IBlockState state, int fortune)
-	{
-		NonNullList<ItemStack> ret = NonNullList.create();
-		TileEntity te =world.getTileEntity(pos);
-		if(te != null && te instanceof TesseraktTile)
-		{
-			ret.add(((TesseraktTile)te).toItemNBT());
-		}
-		else return super.getDrops(world, pos, state, fortune);
-		return ret;
-	}*/
 	@Override
 	public void harvestBlock(World world, EntityPlayer player, BlockPos pos, IBlockState state, @Nullable TileEntity te, ItemStack tool)
 	{

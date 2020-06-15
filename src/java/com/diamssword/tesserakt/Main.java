@@ -1,5 +1,6 @@
 package com.diamssword.tesserakt;
 
+import com.diamssword.tesserakt.dimensional_bag.DimBagRefs;
 import com.diamssword.tesserakt.gui.ModGuiHandler;
 import com.diamssword.tesserakt.packets.PacketRequestTile;
 import com.diamssword.tesserakt.packets.PacketRequestTile.HandlerRequestTile;
@@ -47,9 +48,13 @@ public class Main {
 	public void preInit(FMLPreInitializationEvent e) {
 		proxy.preInit(e);  
 		NetworkRegistry.INSTANCE.registerGuiHandler(this, new ModGuiHandler());
+		Main.config = new Configuration(e.getSuggestedConfigurationFile());
+		Configs.syncConfig(Main.config);
+		DimBagRefs.init();
 	}
 	@EventHandler
 	public void init(FMLInitializationEvent e) {
+		
 		proxy.init(e);
 		proxy.registerRenderers();
 		Main.network = NetworkRegistry.INSTANCE.newSimpleChannel(Main.MODID);

@@ -1,0 +1,86 @@
+package com.diamssword.tesserakt.dimensional_bag;
+
+import java.util.UUID;
+
+import com.diamssword.tesserakt.storage.TesseraktData;
+
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
+
+public class DimBagNBT {
+
+	public BlockPos bagPos;
+	public BlockPos dimPos;
+	public int bagDim=0;
+	public UUID owner;
+	public int size=4;
+
+	public DimBagNBT()
+	{
+	}
+	public NBTTagCompound toNBT(NBTTagCompound tag)
+	{
+		NBTTagCompound tag1=new NBTTagCompound();
+		if(bagPos != null)
+		tag1.setLong("bagPos", bagPos.toLong());
+		if(dimPos != null)
+		tag1.setLong("dimPos", dimPos.toLong());
+		tag1.setInteger("bagDim", this.bagDim);
+		tag1.setInteger("bagSize", this.size);
+		if(owner != null)
+		tag.setTag(owner.toString(), tag1);
+		return tag;
+	}
+	
+	public void fromNBT(NBTTagCompound tag,UUID owner)
+	{
+		NBTTagCompound tag1=(NBTTagCompound) tag.getTag(owner.toString());
+		if(tag1 == null || tag1.hasNoTags())
+		{
+			return;
+		}
+		this.owner = owner;
+		if(tag1.hasKey("bagPos"))
+		this.bagPos=BlockPos.fromLong(tag1.getLong("bagPos"));
+		if(tag1.hasKey("dimPos"))
+		this.dimPos=BlockPos.fromLong(tag1.getLong("dimPos"));
+		this.bagDim=tag1.getInteger("bagDim");
+		this.size = tag1.getInteger("bagSize");
+		 if(tag1.hasKey("rooms"))
+		 {
+			NBTTagCompound tag2=  (NBTTagCompound) tag1.getTag("rooms");
+		 }
+	}
+	
+	public static DimBagNBT get(World world, UUID playerID)
+	{
+		NBTTagCompound tag=(NBTTagCompound) TesseraktData.getDimBag(world);
+		if(tag == null)
+		{
+			tag = new NBTTagCompound();
+		}
+		DimBagNBT bag=new DimBagNBT();
+		bag.fromNBT(tag, playerID);
+		return bag;
+	}
+	public static void save(World world, DimBagNBT bag)
+	{
+		NBTTagCompound tag=(NBTTagCompound) TesseraktData.getDimBag(world);
+		if(tag == null)
+		{
+			tag = new NBTTagCompound();
+		}
+		bag.toNBT(tag);
+		TesseraktData.setBags(world, tag);
+	}
+	public static class Room
+	{
+		public Room(int id)
+		{
+			this.id=id;
+		}
+		int id;
+		boolean max=false;
+	}
+}

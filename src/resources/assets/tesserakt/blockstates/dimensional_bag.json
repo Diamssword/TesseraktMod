@@ -1,0 +1,21 @@
+{
+  "forge_marker": 1,
+  "defaults": {
+    "model": "tesserakt:dim_bag"
+  },
+  "variants": {
+    "inventory": [{}],"normal": [{}],
+	"triggered": {
+	  "false" : {},
+	  "true" : {"model": "tesserakt:dim_bag_open"}
+	},
+	"facing": {
+	  "north" : {},
+	  "east" : {"y": 180},
+	  "west": {"y": 270},
+	  "south":{"y": 90}
+	}
+  }
+ 
+	
+}

@@ -91,5 +91,19 @@ public class TesseraktData extends WorldSavedData {
 		getNBT(w).setTag("names", list);
 		save(w);
 	}
+	public static NBTTagCompound getDimBag(World w)
+	{
+		NBTTagCompound tag= (NBTTagCompound) getNBT(w);
+		
+		if(!tag.hasKey("bags"))
+			tag.setTag("bags", new NBTTagCompound());
+		return (NBTTagCompound) tag.getTag("bags");
+	}
+	public static void setBags(World w,NBTTagCompound tag)
+	{
+		NBTTagCompound tag1= (NBTTagCompound) getNBT(w);
+		tag1.setTag("bags", tag);
+		save(w);
+	}
 
 }

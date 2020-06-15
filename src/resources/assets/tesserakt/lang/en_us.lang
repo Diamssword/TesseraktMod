@@ -6,3 +6,4 @@ itemGroup.tesserakt=Tesserakt
 tile.tesserakt.tesserakt.name=Tesserakt
 tile.tesserakt.frame_empty.name=Tesserakt Frame (Empty)
 tile.tesserakt.frame_full.name=Tesserakt Frame (Full)
+death.attack.dimensional_squish=%s was Dimensionnaly Squished!

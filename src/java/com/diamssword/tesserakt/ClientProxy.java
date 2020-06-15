@@ -1,7 +1,11 @@
 package com.diamssword.tesserakt;
 
 
+import com.diamssword.tesserakt.dimensional_bag.DimBagOutTile;
+import com.diamssword.tesserakt.render.tileentity.TESRDimBagOut;
+import com.diamssword.tesserakt.render.tileentity.TESRDimensionalBattery;
 import com.diamssword.tesserakt.render.tileentity.TESRTesserakt;
+import com.diamssword.tesserakt.tileentity.DimensionalBatteryTile;
 import com.diamssword.tesserakt.tileentity.TesseraktTile;
 
 import net.minecraft.client.resources.I18n;
@@ -36,6 +40,8 @@ public class ClientProxy extends CommonProxy{
 	@Override
 	public void registerRenderers() {
 		ClientRegistry.bindTileEntitySpecialRenderer(TesseraktTile.class, new TESRTesserakt());
+		ClientRegistry.bindTileEntitySpecialRenderer(DimensionalBatteryTile.class, new TESRDimensionalBattery());
+		ClientRegistry.bindTileEntitySpecialRenderer(DimBagOutTile.class, new TESRDimBagOut());
 	}
 	
 }
