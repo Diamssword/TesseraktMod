@@ -1,9 +1,11 @@
 package com.diamssword.tesserakt.dimensional_bag;
 
 import java.util.Random;
+import java.util.UUID;
 
 import com.diamssword.tesserakt.Configs;
 import com.diamssword.tesserakt.Main;
+import com.diamssword.tesserakt.Registers;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
@@ -23,6 +25,7 @@ public class DimBagItem extends Item{
 		this.setUnlocalizedName(Main.MODID+".dimensional_bag");
 		this.setRegistryName("dimensional_bag");
 		this.setMaxStackSize(1);
+		this.setCreativeTab(Registers.tab);
 	}
 	public ActionResult<ItemStack> onItemRightClick(World worldIn, EntityPlayer playerIn, EnumHand handIn)
 	{
@@ -32,7 +35,29 @@ public class DimBagItem extends Item{
 			if(playerIn.world.isAirBlock(pos))
 			{
 				if(!worldIn.isRemote && worldIn instanceof WorldServer)
-					this.useBag(worldIn, playerIn, pos);
+				{
+					ItemStack stack=playerIn.getHeldItem(handIn);
+					UUID id = null;
+					if(stack.hasTagCompound())
+					{
+						if(stack.getTagCompound().hasKey("id"))
+						{
+							try {
+								id= UUID.fromString(stack.getTagCompound().getString("id"));
+							}catch(IllegalArgumentException e)
+							{
+								id = UUID.randomUUID();
+							}
+						}
+
+					}
+					if(id == null)
+					{
+						id = UUID.randomUUID();
+					}
+					playerIn.getHeldItem(handIn).shrink(1);
+					this.useBag(worldIn, playerIn,id, pos);	
+				}
 			}
 			else
 			{
@@ -47,8 +72,27 @@ public class DimBagItem extends Item{
 							{
 								if(!worldIn.isRemote && worldIn instanceof WorldServer)
 								{
+									ItemStack stack=playerIn.getHeldItem(handIn);
+									UUID id = null;
+									if(stack.hasTagCompound())
+									{
+										if(stack.getTagCompound().hasKey("id"))
+										{
+											try {
+												id= UUID.fromString(stack.getTagCompound().getString("id"));
+											}catch(IllegalArgumentException e)
+											{
+												id = UUID.randomUUID();
+											}
+										}
+
+									}
+									if(id == null)
+									{
+										id = UUID.randomUUID();
+									}
 									playerIn.getHeldItem(handIn).shrink(1);
-									this.useBag(worldIn, playerIn, p1);
+									this.useBag(worldIn, playerIn,id, p1);
 								}
 								return new ActionResult<ItemStack>(EnumActionResult.SUCCESS, playerIn.getHeldItem(handIn));
 							}
@@ -60,25 +104,25 @@ public class DimBagItem extends Item{
 		return new ActionResult<ItemStack>(EnumActionResult.FAIL, playerIn.getHeldItem(handIn));
 	}
 	private Random rand = new Random();
-	private void useBag(World worldIn, EntityPlayer playerIn, BlockPos pos)
+	private void useBag(World worldIn, EntityPlayer playerIn,UUID id, BlockPos pos)
 	{
-		DimBagNBT bag=DimBagNBT.get(worldIn, playerIn.getUniqueID());
+		DimBagNBT bag=DimBagNBT.get(worldIn, id);
 		if(bag.bagPos != null)
 		{
-		World w =worldIn.getMinecraftServer().getWorld(bag.bagDim);
-		if(w != null)
-			w.setBlockToAir(bag.bagPos);
+			World w =worldIn.getMinecraftServer().getWorld(bag.bagDim);
+			if(w != null)
+				w.setBlockToAir(bag.bagPos);
 		}
 		bag.bagPos = pos;
 		bag.bagDim  =worldIn.provider.getDimension();
-		bag.owner=playerIn.getUniqueID();
+		bag.id=id;
 		DimBagNBT.save(worldIn, bag);
 		worldIn.setBlockState(pos, DimBagRefs.BagjerumBlock.getDefaultState().withProperty(DimBagBlock.FACING, EnumFacing.getFront(2+((int)rand.nextInt(4)))));
 		TileEntity tile = worldIn.getTileEntity(pos);
 		if(tile != null && tile instanceof DimBagTile)
 		{
-			((DimBagTile) tile).setOwner(playerIn.getUniqueID());
+			((DimBagTile) tile).setOwner(id);
 		}
-		DimBagLogic.TeleportPlayerToRoom(playerIn, playerIn.getUniqueID());
+		DimBagLogic.TeleportPlayerToRoom(playerIn, id);
 	}
 }

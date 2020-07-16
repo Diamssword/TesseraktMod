@@ -25,7 +25,9 @@ import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.energy.IEnergyStorage;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
+import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.items.CapabilityItemHandler;
+import net.minecraftforge.items.IItemHandler;
 
 public class TesseraktTile extends TileEntity implements ITickable{
 	private Tesserakt tesseract;
@@ -67,7 +69,7 @@ public class TesseraktTile extends TileEntity implements ITickable{
 					world.notifyNeighborsOfStateChange(pos, blockType, true);
 				}
 			}
-			if(tesseract != null && energy != null && this.energy.canExtract())
+			if(tesseract != null)
 			{
 				this.pushTo(pos.up(), EnumFacing.DOWN);
 				this.pushTo(pos.down(), EnumFacing.UP);
@@ -82,7 +84,7 @@ public class TesseraktTile extends TileEntity implements ITickable{
 				IBlockState st =world.getBlockState(pos);
 				world.notifyBlockUpdate(pos,st,st, 3);
 				world.notifyNeighborsOfStateChange(pos,Registers.blockTesserakt,true);
-				}
+			}
 		}
 	}
 
@@ -91,7 +93,7 @@ public class TesseraktTile extends TileEntity implements ITickable{
 		TileEntity te = world.getTileEntity(pos);
 		if(te != null)
 		{
-			if(te.hasCapability(CapabilityEnergy.ENERGY, facing))
+			if(energy != null && this.energy.canExtract() && te.hasCapability(CapabilityEnergy.ENERGY, facing))
 			{
 				IEnergyStorage en =te.getCapability(CapabilityEnergy.ENERGY, facing);
 				if(en.canReceive())
@@ -100,20 +102,23 @@ public class TesseraktTile extends TileEntity implements ITickable{
 					this.energy.extractEnergy(am, false);
 				}
 			}
-		/*	if(te.hasCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, facing))
+			if(fluid != null && this.fluid.canDrain() && te.hasCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, facing))
 			{
 				IFluidHandler en =te.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, facing);
-			
-					int am=en.fill(this.fluid.getFluid(), false);
-					this.fluid.drain(am, true);
+				int am=en.fill(this.fluid.getFluid(), false);
+				this.fluid.drain(am, true);
 			}
-			if(te.hasCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, facing))
+			if(item != null && this.canOutput(1) && te.hasCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, facing))
 			{
 				IItemHandler en =te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, facing);
-			
-					int am=en.insertItem(slot, stack, simulate).fill(this.fluid.getFluid(), false);
-					this.fluid.drain(am, true);
-			}*/
+				for(int slot=0;slot<en.getSlots();slot++)
+				{
+					ItemStack am=en.insertItem(slot, this.item.getStackInSlot(0), false);
+					this.item.setStackInSlot(0, am);
+					if(am.isEmpty())
+						break;
+				}
+			}
 		}
 	}
 	@Override
@@ -178,8 +183,8 @@ public class TesseraktTile extends TileEntity implements ITickable{
 	{
 		if(this.tesseract != null && this.connected)
 		{
-				this.tesseract.redstonePowered = power;
-				Tesserakt.save(world, tesseract);
+			this.tesseract.redstonePowered = power;
+			Tesserakt.save(world, tesseract);
 		}
 	}
 	public int getRedstone()

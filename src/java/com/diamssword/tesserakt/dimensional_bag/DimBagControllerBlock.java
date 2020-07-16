@@ -42,10 +42,10 @@ public class DimBagControllerBlock extends Block implements TEBlock<DimBagContro
 					if(bag!= null)
 					{
 						ItemStack stack = playerIn.getHeldItem(hand);
-						if(stack != null && stack.getItem()== Items.EMERALD && bag.size*2 <=64)
+						if(stack != null && stack.getItem()== Items.NETHER_STAR && bag.size*2 <=64)
 						{
 
-
+							stack.shrink(1);
 							bag.size = bag.size*2;
 							Chunk c = worldIn.getChunkFromBlockCoords(bag.dimPos.east(5));
 							DimBagNBT.save(worldIn, bag);

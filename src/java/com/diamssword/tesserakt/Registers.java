@@ -53,15 +53,15 @@ public class Registers {
 			e.getRegistry().register(blockTesserakt);
 			e.getRegistry().register(blockFrameFull);
 			e.getRegistry().register(blockFrameEmpty);
-			e.getRegistry().register(blockDimensionalBattery);
+	//		e.getRegistry().register(blockDimensionalBattery);
 			GameRegistry.registerTileEntity(TesseraktTile.class, blockTesserakt.getRegistryName());
-			GameRegistry.registerTileEntity(DimensionalBatteryTile.class, blockDimensionalBattery.getRegistryName());
+	//		GameRegistry.registerTileEntity(DimensionalBatteryTile.class, blockDimensionalBattery.getRegistryName());
 			if(Configs.FrameFill)
 				GameRegistry.registerTileEntity(FrameTile.class, blockFrameEmpty.getRegistryName());
 			
 
-			e.getRegistry().register(new CheatedBattryBlock());
-			GameRegistry.registerTileEntity(CheatedBatteryTile.class, new CheatedBattryBlock().getRegistryName());
+			//e.getRegistry().register(new CheatedBattryBlock());
+			//GameRegistry.registerTileEntity(CheatedBatteryTile.class, new CheatedBattryBlock().getRegistryName());
 			
 			for(Block b: blocks)
 			{
@@ -80,11 +80,11 @@ public class Registers {
 			e.getRegistry().register(new ItemBlock(blockTesserakt).setUnlocalizedName(blockTesserakt.getUnlocalizedName()).setRegistryName(blockTesserakt.getRegistryName()));
 			e.getRegistry().register(new ItemBlock(blockFrameEmpty).setUnlocalizedName(blockFrameEmpty.getUnlocalizedName()).setRegistryName(blockFrameEmpty.getRegistryName()));
 			e.getRegistry().register(new ItemBlock(blockFrameFull).setUnlocalizedName(blockFrameFull.getUnlocalizedName()).setRegistryName(blockFrameFull.getRegistryName()));
-			e.getRegistry().register(new ItemBlock(blockDimensionalBattery).setUnlocalizedName(blockDimensionalBattery.getUnlocalizedName()).setRegistryName(blockDimensionalBattery.getRegistryName()));
+		//	e.getRegistry().register(new ItemBlock(blockDimensionalBattery).setUnlocalizedName(blockDimensionalBattery.getUnlocalizedName()).setRegistryName(blockDimensionalBattery.getRegistryName()));
 			
 			
 			
-			e.getRegistry().register(new ItemBlock(new CheatedBattryBlock()).setUnlocalizedName(new CheatedBattryBlock().getUnlocalizedName()).setRegistryName(new CheatedBattryBlock().getRegistryName()));
+			//e.getRegistry().register(new ItemBlock(new CheatedBattryBlock()).setUnlocalizedName(new CheatedBattryBlock().getUnlocalizedName()).setRegistryName(new CheatedBattryBlock().getRegistryName()));
 			for(Item b: items)
 			{
 				e.getRegistry().register(b);

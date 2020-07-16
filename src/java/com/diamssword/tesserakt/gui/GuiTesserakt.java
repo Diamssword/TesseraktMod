@@ -10,6 +10,7 @@ import com.diamssword.tesserakt.packets.PacketSendNamesClient;
 import com.diamssword.tesserakt.storage.TesseraktData;
 import com.diamssword.tesserakt.tileentity.TesseraktTile;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.GuiTextField;
@@ -245,6 +246,18 @@ public class GuiTesserakt extends GuiScreen {
 			this.idField.textboxKeyTyped(typedChar, keyCode);
 		}
 		this.nameField.textboxKeyTyped(typedChar, keyCode);
+		if(!this.nameField.isFocused())
+		{
+			if(Minecraft.getMinecraft().gameSettings.keyBindInventory.getKeyCode() == keyCode)
+			{
+				  this.mc.displayGuiScreen((GuiScreen)null);
+
+		            if (this.mc.currentScreen == null)
+		            {
+		                this.mc.setIngameFocus();
+		            }
+			}
+		}
 	}
 	public void updateScreen()
 	{

@@ -13,7 +13,7 @@ public class DimBagNBT {
 	public BlockPos bagPos;
 	public BlockPos dimPos;
 	public int bagDim=0;
-	public UUID owner;
+	public UUID id;
 	public int size=4;
 
 	public DimBagNBT()
@@ -28,8 +28,8 @@ public class DimBagNBT {
 		tag1.setLong("dimPos", dimPos.toLong());
 		tag1.setInteger("bagDim", this.bagDim);
 		tag1.setInteger("bagSize", this.size);
-		if(owner != null)
-		tag.setTag(owner.toString(), tag1);
+		if(id != null)
+		tag.setTag(id.toString(), tag1);
 		return tag;
 	}
 	
@@ -40,17 +40,13 @@ public class DimBagNBT {
 		{
 			return;
 		}
-		this.owner = owner;
+		this.id = owner;
 		if(tag1.hasKey("bagPos"))
 		this.bagPos=BlockPos.fromLong(tag1.getLong("bagPos"));
 		if(tag1.hasKey("dimPos"))
 		this.dimPos=BlockPos.fromLong(tag1.getLong("dimPos"));
 		this.bagDim=tag1.getInteger("bagDim");
 		this.size = tag1.getInteger("bagSize");
-		 if(tag1.hasKey("rooms"))
-		 {
-			NBTTagCompound tag2=  (NBTTagCompound) tag1.getTag("rooms");
-		 }
 	}
 	
 	public static DimBagNBT get(World world, UUID playerID)

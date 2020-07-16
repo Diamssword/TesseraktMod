@@ -16,7 +16,10 @@ import net.minecraft.block.properties.PropertyDirection;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
@@ -27,7 +30,7 @@ import net.minecraft.world.World;
 
 public class DimBagBlock extends Block implements TEBlock<DimBagTile>{
 
-	protected static final AxisAlignedBB BASE_HITBOX = new AxisAlignedBB(0.15D, 0.0D, 0.15D, 0.85D, 0.5D, 0.85D);
+	protected static final AxisAlignedBB BASE_HITBOX = new AxisAlignedBB(0.1D, 0.0D, 0.10D, 0.90D,0.8D, 0.80D);
 	public static PropertyBool TRIGGERED = PropertyBool.create("triggered");
 	public static final PropertyDirection FACING = BlockHorizontal.FACING;
 	public DimBagBlock() {
@@ -42,14 +45,34 @@ public class DimBagBlock extends Block implements TEBlock<DimBagTile>{
 	{
 		if(!worldIn.isRemote)
 		{
-			TileEntity tile = worldIn.getTileEntity(pos);
-			if(tile != null && tile instanceof DimBagTile)
-			{
-				UUID id =((DimBagTile) tile).getOwner();
-				if(id!= null)
-				{
-					DimBagLogic.TeleportPlayerToRoom(playerIn, id);
 
+			TileEntity tile = worldIn.getTileEntity(pos);
+			if(playerIn.isSneaking())
+			{
+				ItemStack st=new ItemStack(DimBagRefs.BagjerumItem);
+				if(tile != null && tile instanceof DimBagTile)
+				{
+					UUID id =((DimBagTile) tile).getOwner();
+					NBTTagCompound tag=new NBTTagCompound();
+					tag.setString("id", id.toString());
+					st.setTagCompound(tag);
+				}
+				if(!playerIn.addItemStackToInventory(st))
+				{
+					EntityItem ent=new EntityItem(worldIn, pos.getX(), pos.getY(), pos.getZ(), st);
+					worldIn.spawnEntity(ent);
+				}
+				worldIn.setBlockToAir(pos);
+			}
+			else
+			{
+				if(tile != null && tile instanceof DimBagTile)
+				{
+					UUID id =((DimBagTile) tile).getOwner();
+					if(id!= null)
+					{
+						DimBagLogic.TeleportPlayerToRoom(playerIn, id);
+					}
 				}
 			}
 		}
