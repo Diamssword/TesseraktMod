@@ -6,6 +6,7 @@ import com.diamssword.tesserakt.Configs;
 import com.diamssword.tesserakt.storage.TesseraktData;
 import com.diamssword.tesserakt.utils.ModTeleporter;
 
+import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
@@ -19,10 +20,7 @@ import net.minecraft.world.chunk.Chunk;
 public class DimBagLogic {
 
 
-	public static BlockPos getPlayersCoords(EntityPlayer p)
-	{
-		return getRoomCoords(p.getUniqueID(),p.world);
-	}
+
 	public static BlockPos getRoomCoords(UUID id,World world)
 	{
 		DimBagNBT bag=DimBagNBT.get(world, id);
@@ -59,6 +57,7 @@ public class DimBagLogic {
 
 		}
 		player.setPositionAndUpdate(pos.getX()+0.5, pos.getY()+0.5, pos.getZ()+0.5);
+		player.setSpawnPoint(pos.up(), true);
 		if(!created)
 		{
 
@@ -87,7 +86,7 @@ public class DimBagLogic {
 
 
 	}
-
+	
 	public static void fill(BlockPos pos1, BlockPos pos2,World world,IBlockState block)
 	{
 		BlockPos pos3 = new BlockPos(Math.min(pos1.getX(), pos2.getX()), Math.min(pos1.getY(), pos2.getY()), Math.min(pos1.getZ(), pos2.getZ()));

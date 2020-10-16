@@ -1,5 +1,7 @@
 package com.diamssword.tesserakt.gui;
 
+import com.diamssword.tesserakt.dimensional_bag.DimBagControllerTile;
+import com.diamssword.tesserakt.tileentity.ExponentialBatteryTile;
 import com.diamssword.tesserakt.tileentity.TesseraktTile;
 
 import net.minecraft.entity.player.EntityPlayer;
@@ -20,6 +22,10 @@ public class ModGuiHandler implements IGuiHandler {
 		TileEntity tile = world.getTileEntity(new BlockPos(x,y,z));
 		if(ID ==1 && tile != null && tile instanceof TesseraktTile)
 			return new GuiTesserakt((TesseraktTile) tile);
+		if(ID ==2 && tile != null && tile instanceof DimBagControllerTile)
+			return new GuiDimBagController((DimBagControllerTile) tile);
+		if(ID ==3 && tile != null && tile instanceof ExponentialBatteryTile)
+			return new GuiBattery( (ExponentialBatteryTile) tile);
 		return null;
 	}
 }

@@ -9,6 +9,7 @@ import com.diamssword.tesserakt.Main;
 import com.diamssword.tesserakt.Registers;
 import com.diamssword.tesserakt.WrenchsCompat;
 import com.diamssword.tesserakt.tileentity.FrameTile;
+import com.diamssword.tesserakt.utils.IIngredientDisplay;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
@@ -26,13 +27,14 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.fluids.FluidActionResult;
+import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-public class EmptyBlock extends Block{
+public class EmptyBlock extends Block implements IIngredientDisplay{
 	public static PropertyInteger FILLED = PropertyInteger.create("filled", 0,3);
 	public EmptyBlock(String name) {
 		super(Material.IRON);
@@ -49,7 +51,7 @@ public class EmptyBlock extends Block{
 	{
 		if(stack.getItem() == Item.getItemFromBlock(this))
 		{
-			tooltip.add("Filled by clicking the block with a Resonant Ender Bucket ore piping it in directly");
+			tooltip.add("Filled by clicking the block with a Resonant Ender Bucket or piping it in directly");
 		}
 	}
 	public boolean isOpaqueCube(IBlockState state)
@@ -142,6 +144,19 @@ public class EmptyBlock extends Block{
 	public int getComparatorInputOverride(IBlockState blockState, World worldIn, BlockPos pos)
 	{
 		return blockState.getValue(FILLED);
+	}
+	private ItemStack bucket = null;
+	@Override
+	public ItemStack[][] toDisplay(IBlockState state) {
+		if(state.getValue(FILLED)==0)
+		{
+			if(bucket == null)
+			{
+				bucket=FluidUtil.getFilledBucket(new FluidStack(FluidRegistry.getFluid(Configs.enderFluid), 1000));
+			}
+			return new ItemStack[][] {{bucket}};
+		}
+		return null;
 	}
 
 }

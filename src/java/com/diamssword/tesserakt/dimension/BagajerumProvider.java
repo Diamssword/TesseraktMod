@@ -23,7 +23,7 @@ public class BagajerumProvider extends WorldProvider
 
 	public BagajerumProvider()
 	{
-        this.biomeProvider = new BiomeProviderSingle(Biomes.VOID);
+		this.biomeProvider = new BiomeProviderSingle(Biomes.VOID);
 	}
 	@SideOnly(Side.CLIENT)
 	public net.minecraftforge.client.IRenderHandler getSkyRenderer()
@@ -35,19 +35,24 @@ public class BagajerumProvider extends WorldProvider
 	{
 		return empty;
 	}
+	@Override
+	public void setWorldTime(long time)
+	{
+	}
 	public void calculateInitialWeather()
 	{
+		this.setWorldTime(0);
 		super.calculateInitialWeather();
-		this.world.getGameRules().setOrCreateGameRule("doDaylightCycle", "false");
-		this.world.getGameRules().setOrCreateGameRule("doWeatherCycle", "false");
+		//this.world.getGameRules().setOrCreateGameRule("doDaylightCycle", "false");
 	}
 	public int getAverageGroundLevel()
 	{
 		return 127;
 	}
+	@Override
 	public void updateWeather()
 	{
-		//this.resetRainAndThunder();
+		this.world.getWorldInfo().setRaining(false);
 	}
 	@Override
 	public DimensionType getDimensionType()
@@ -67,7 +72,7 @@ public class BagajerumProvider extends WorldProvider
 		if(chunkgen == null)
 		{
 			chunkgen =  new ChunkGeneratorFlat(world, world.getSeed(), false, "3;255*bedrock;127");
-	        this.biomeProvider = new BiomeProviderSingle(Biomes.VOID);
+			this.biomeProvider = new BiomeProviderSingle(Biomes.VOID);
 		}
 		return chunkgen;
 	}
@@ -77,7 +82,7 @@ public class BagajerumProvider extends WorldProvider
 	{
 		return 255.0F;
 	}
-	
+
 	@Override
 	@SideOnly(Side.CLIENT)
 	public IRenderHandler getCloudRenderer()
@@ -106,13 +111,13 @@ public class BagajerumProvider extends WorldProvider
 	{
 		return null;
 	}
-	 protected void generateLightBrightnessTable()
-	    {
-		 float f = 0.3F;
-			for(int i = 0; i <= 15; ++i) {
-				float f1 = 1.0F - (float) i / 15.0F;
-				this.lightBrightnessTable[i] = (1.0F - f1) / (f1 * 3.0F + 1.0F) * (1.0F - f) + f;
-			}
-	    }
+	protected void generateLightBrightnessTable()
+	{
+		float f = 0.3F;
+		for(int i = 0; i <= 15; ++i) {
+			float f1 = 1.0F - (float) i / 15.0F;
+			this.lightBrightnessTable[i] = (1.0F - f1) / (f1 * 3.0F + 1.0F) * (1.0F - f) + f;
+		}
+	}
 
 }

@@ -10,7 +10,7 @@ public class Tesserakt {
 
 	public static Map<Integer,Tesserakt> loadeds = new HashMap<Integer,Tesserakt>();
 	public int id;
-	public TEnergyStorage energy = new TEnergyStorage(100000,this);
+	public TEnergyStorage energy = new TEnergyStorage(1000000,this);
 	public TItemStorage item = new TItemStorage(1,this);
 	public TFluidStorage fluid = new TFluidStorage(1000,this);
 	public int redstonePowered=0;

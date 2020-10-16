@@ -1,0 +1,27 @@
+{
+    "type": "minecraft:crafting_shaped",
+    "pattern":
+    [
+        "axa",
+        "x x",
+        "axa"
+    ],
+    "key":
+    {
+        "a":
+        {
+            "type": "forge:ore_dict",
+            "ore": "wool"
+        },
+        "x":
+        {
+            "item": "minecraft:ender_eye"
+        }
+    },
+    "result":
+    {
+        "item": "tesserakt:ender_wool",
+        "count": 4,
+        "data": 0
+    }
+}

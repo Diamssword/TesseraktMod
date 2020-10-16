@@ -41,6 +41,7 @@ public class TesseraktTile extends TileEntity implements ITickable{
 	private  int ioItem=3;
 	private  int ioFluid=3;
 	private  int ioRedstone=0;
+	private boolean shouldUpdate = false;
 	@Override
 	public void update() {
 		if(this.world != null)
@@ -65,7 +66,7 @@ public class TesseraktTile extends TileEntity implements ITickable{
 
 					IBlockState st =world.getBlockState(pos);
 					world.notifyBlockUpdate(pos, st,st.withProperty(TesseraktBlock.CONNECTED, this.connected), 3);
-					world.setBlockState(pos,st.withProperty(TesseraktBlock.CONNECTED, false));
+					world.setBlockState(pos,st.withProperty(TesseraktBlock.CONNECTED, this.connected));
 					world.notifyNeighborsOfStateChange(pos, blockType, true);
 				}
 			}
@@ -84,6 +85,14 @@ public class TesseraktTile extends TileEntity implements ITickable{
 				IBlockState st =world.getBlockState(pos);
 				world.notifyBlockUpdate(pos,st,st, 3);
 				world.notifyNeighborsOfStateChange(pos,Registers.blockTesserakt,true);
+			}
+			if(tesseract != null && shouldUpdate)
+			{
+				shouldUpdate = false;
+				IBlockState st =world.getBlockState(pos);
+				world.notifyBlockUpdate(pos, st,st.withProperty(TesseraktBlock.CONNECTED, this.connected), 3);
+				world.setBlockState(pos,st.withProperty(TesseraktBlock.CONNECTED, this.connected));
+				world.notifyNeighborsOfStateChange(pos, blockType, true);
 			}
 		}
 	}
@@ -174,10 +183,12 @@ public class TesseraktTile extends TileEntity implements ITickable{
 			if(this.fluid != null)
 				this.fluid.setIO(this.canInput(2), this.canOutput(2));
 			this.markDirty();
+			shouldUpdate=true;
 		}
-		IBlockState st = world.getBlockState(pos);
+	/*	IBlockState st = world.getBlockState(pos);
 		world.notifyBlockUpdate(pos,st, st.withProperty(TesseraktBlock.CONNECTED, this.connected), 3);
-		world.notifyNeighborsOfStateChange(pos, Registers.blockTesserakt, true);
+		world.notifyBlockUpdate(pos, st.withProperty(TesseraktBlock.CONNECTED, !this.connected),st.withProperty(TesseraktBlock.CONNECTED, this.connected), 3);
+		world.notifyNeighborsOfStateChange(pos, Registers.blockTesserakt, true);*/
 	}
 	public void updateRedstone(int power)
 	{
@@ -265,11 +276,7 @@ public class TesseraktTile extends TileEntity implements ITickable{
 		this.tesseract = null;
 		this.connected=true;
 		this.markDirty();
-
-		IBlockState st = world.getBlockState(pos);
-		world.notifyBlockUpdate(pos, st.withProperty(TesseraktBlock.CONNECTED, false),st.withProperty(TesseraktBlock.CONNECTED, this.connected), 3);
-		world.setBlockState(pos, st.withProperty(TesseraktBlock.CONNECTED, true));
-		world.notifyNeighborsOfStateChange(pos, blockType, true);
+		shouldUpdate=true;
 	}
 	public void desactivate()
 	{
@@ -279,11 +286,7 @@ public class TesseraktTile extends TileEntity implements ITickable{
 		this.fluid = null;
 		this.item= null;
 		this.markDirty();
-
-		IBlockState st = world.getBlockState(pos);
-		world.notifyBlockUpdate(pos, st,st.withProperty(TesseraktBlock.CONNECTED, this.connected), 3);
-		world.setBlockState(pos,st.withProperty(TesseraktBlock.CONNECTED, false));
-		world.notifyNeighborsOfStateChange(pos, blockType, true);
+		shouldUpdate=true;
 	}
 	public ItemStack toItemNBT()
 	{

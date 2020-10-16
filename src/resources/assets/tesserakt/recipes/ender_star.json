@@ -1,0 +1,30 @@
+{
+    "type": "minecraft:crafting_shaped",
+    "pattern":
+    [
+        "axa",
+        "xsx",
+        "axa"
+    ],
+    "key":
+    {
+        "a":
+        {
+            "item": "tesserakt:ender_wool"
+        },
+		 "s":
+        {
+            "item": "minecraft:nether_star"
+        },
+        "x":
+        {
+            "item": "minecraft:ender_eye"
+        }
+    },
+    "result":
+    {
+        "item": "tesserakt:ender_star",
+        "count": 1,
+        "data": 0
+    }
+}

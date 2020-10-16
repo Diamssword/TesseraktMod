@@ -174,11 +174,13 @@ public class TesseraktBlock extends Block{
 					te.setChannelAndActivate(te.getChannel());
 				else
 					te.desactivate();
+				worldIn.notifyNeighborsOfStateChange(pos, Registers.blockTesserakt, true);
 			}
 			if(mode == 1)
 			{
 				int pow=this.getMostPower(pos, worldIn);
 				te.updateRedstone(pow);
+				worldIn.notifyNeighborsOfStateChange(pos, Registers.blockTesserakt, true);
 			}
 
 		}

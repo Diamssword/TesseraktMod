@@ -1,12 +1,16 @@
 package com.diamssword.tesserakt.dimensional_bag;
 
+import java.util.List;
 import java.util.Random;
 import java.util.UUID;
+
+import javax.annotation.Nullable;
 
 import com.diamssword.tesserakt.Configs;
 import com.diamssword.tesserakt.Main;
 import com.diamssword.tesserakt.Registers;
 
+import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -18,6 +22,8 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class DimBagItem extends Item{
 
@@ -26,6 +32,20 @@ public class DimBagItem extends Item{
 		this.setRegistryName("dimensional_bag");
 		this.setMaxStackSize(1);
 		this.setCreativeTab(Registers.tab);
+	}
+	@SideOnly(Side.CLIENT)
+	public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, ITooltipFlag advanced)
+	{
+		if(stack.getItem() == this)
+		{
+			tooltip.add("A Traveler's best friend!");
+			tooltip.add("A Tesserakt Frame filled with wool, surounded by obsidian and powered by a nether star");
+			if(stack.hasTagCompound())
+			{
+				if(stack.getTagCompound().hasKey("id"))
+					tooltip.add("ID:"+stack.getTagCompound().getString("id"));
+			}
+		}
 	}
 	public ActionResult<ItemStack> onItemRightClick(World worldIn, EntityPlayer playerIn, EnumHand handIn)
 	{

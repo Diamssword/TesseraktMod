@@ -4,6 +4,14 @@
     "model": "tesserakt:dim_bag_controller"
   },
   "variants": {
-    "inventory": [{}],"normal": [{}]
+    "inventory": [{}],"normal": [{}],
+	"upgrades":
+	{
+		"0":{};
+		"1":{"submodel":"tesserakt:dim_bag_controller_1"},
+		"2":{"submodel":"tesserakt:dim_bag_controller_2"},
+		"3":{"submodel":"tesserakt:dim_bag_controller_3"},
+		"4":{"submodel":"tesserakt:dim_bag_controller_4"}
+	}
   }
 }

@@ -14,7 +14,7 @@ import net.minecraftforge.client.IRenderHandler;
 
 public class EndSkyRenderHandler extends IRenderHandler
 {
-    private static final ResourceLocation END_SKY_TEXTURES = new ResourceLocation(Main.MODID,"textures/gui/end_sky.png");
+    private static final ResourceLocation END_SKY_TEXTURES = new ResourceLocation(Main.MODID,"textures/environement/bag_sky.png");
 	@Override
 	public void render(float partialTicks, WorldClient world, Minecraft mc)
 	{

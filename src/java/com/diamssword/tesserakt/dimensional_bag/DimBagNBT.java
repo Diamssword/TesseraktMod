@@ -15,6 +15,7 @@ public class DimBagNBT {
 	public int bagDim=0;
 	public UUID id;
 	public int size=4;
+	public int upgrades=0;
 
 	public DimBagNBT()
 	{
@@ -28,11 +29,24 @@ public class DimBagNBT {
 		tag1.setLong("dimPos", dimPos.toLong());
 		tag1.setInteger("bagDim", this.bagDim);
 		tag1.setInteger("bagSize", this.size);
+		tag1.setInteger("upgrades", this.upgrades);
 		if(id != null)
 		tag.setTag(id.toString(), tag1);
 		return tag;
 	}
-	
+	public NBTTagCompound toNBTClient()
+	{
+		NBTTagCompound tag1=new NBTTagCompound();
+		if(bagPos != null)
+		tag1.setLong("bagPos", bagPos.toLong());
+		if(dimPos != null)
+		tag1.setLong("dimPos", dimPos.toLong());
+		tag1.setInteger("bagDim", this.bagDim);
+		tag1.setInteger("bagSize", this.size);
+		tag1.setInteger("upgrades", this.upgrades);
+		tag1.setString("id", this.id.toString());
+		return tag1;
+	}
 	public void fromNBT(NBTTagCompound tag,UUID owner)
 	{
 		NBTTagCompound tag1=(NBTTagCompound) tag.getTag(owner.toString());
@@ -47,6 +61,18 @@ public class DimBagNBT {
 		this.dimPos=BlockPos.fromLong(tag1.getLong("dimPos"));
 		this.bagDim=tag1.getInteger("bagDim");
 		this.size = tag1.getInteger("bagSize");
+		this.upgrades = tag1.getInteger("upgrades");
+	}
+	public void fromNBTClient(NBTTagCompound tag)
+	{
+		this.id = UUID.fromString(tag.getString("id"));
+		if(tag.hasKey("bagPos"))
+		this.bagPos=BlockPos.fromLong(tag.getLong("bagPos"));
+		if(tag.hasKey("dimPos"))
+		this.dimPos=BlockPos.fromLong(tag.getLong("dimPos"));
+		this.bagDim=tag.getInteger("bagDim");
+		this.size = tag.getInteger("bagSize");
+		this.upgrades = tag.getInteger("upgrades");
 	}
 	
 	public static DimBagNBT get(World world, UUID playerID)

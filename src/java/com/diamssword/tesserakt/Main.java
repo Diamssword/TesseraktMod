@@ -6,6 +6,8 @@ import com.diamssword.tesserakt.packets.PacketRequestTile;
 import com.diamssword.tesserakt.packets.PacketRequestTile.HandlerRequestTile;
 import com.diamssword.tesserakt.packets.PacketSendEnable;
 import com.diamssword.tesserakt.packets.PacketSendEnable.HandlerSendEnable;
+import com.diamssword.tesserakt.packets.PacketSendEnergy;
+import com.diamssword.tesserakt.packets.PacketSendEnergy.HandlerSendEnergy;
 import com.diamssword.tesserakt.packets.PacketSendIO;
 import com.diamssword.tesserakt.packets.PacketSendIO.HandlerSendIO;
 import com.diamssword.tesserakt.packets.PacketSendNames;
@@ -63,6 +65,7 @@ public class Main {
 		Main.network.registerMessage(HandlerSendEnable.class, PacketSendEnable.class, 2, Side.SERVER);
 		Main.network.registerMessage(HandlerSendIO.class, PacketSendIO.class, 3, Side.SERVER);
 		Main.network.registerMessage(HandlerRequestTile.class, PacketRequestTile.class, 4, Side.SERVER);
+		Main.network.registerMessage(HandlerSendEnergy.class, PacketSendEnergy.class, 5, Side.CLIENT);
 	}
 
 	@EventHandler

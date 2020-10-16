@@ -5,8 +5,17 @@
 	"textures": {"0": "tesserakt:blocks/frame"}
   },
   "variants": {
-    "inventory": [{
-	"submodel":"tesserakt:tesserakt_inside"}],"normal": [{
-	"submodel":"tesserakt:tesserakt_inside"}]
+    "inventory": [{"submodel":"tesserakt:tesserakt_inside"}],
+	"normal": [{"submodel":"tesserakt:tesserakt_inside"}],
+	"covered": {
+	"0" : {"submodel":"tesserakt:tesserakt_inside"},
+	"1" : {"submodel":{"in":{"model":"tesserakt:tesserakt_inside"},"cover_0":{"model":"tesserakt:tesserakt_cover","x": 270}}},
+	"2" : {"submodel":{"in":{"model":"tesserakt:tesserakt_inside"},"cover_1": {"model": "tesserakt:tesserakt_cover","x":270},"cover_2": { "model": "tesserakt:tesserakt_cover", "x": 90 }}},
+	"3" : {"submodel":{"in":{"model":"tesserakt:tesserakt_inside"},"cover_1": {"model": "tesserakt:tesserakt_cover","x":270},"cover_2": { "model": "tesserakt:tesserakt_cover", "x": 90 },"cover_3": { "model": "tesserakt:tesserakt_cover"}}},
+	"4" : {"submodel":{"in":{"model":"tesserakt:tesserakt_inside"},"cover_1": {"model": "tesserakt:tesserakt_cover","x":270},"cover_2": { "model": "tesserakt:tesserakt_cover", "x": 90 },"cover_3": { "model": "tesserakt:tesserakt_cover"},"cover_4": { "model": "tesserakt:tesserakt_cover","y":90}}},
+	"5" : {"submodel":{"in":{"model":"tesserakt:tesserakt_inside"},"cover_1": {"model": "tesserakt:tesserakt_cover","x":270},"cover_2": { "model": "tesserakt:tesserakt_cover", "x": 90 },"cover_3": { "model": "tesserakt:tesserakt_cover"},"cover_4": { "model": "tesserakt:tesserakt_cover","y":90},"cover_5": { "model": "tesserakt:tesserakt_cover","y":180}}},
+	"6" : {"submodel":{"in":{"model":"tesserakt:tesserakt_inside"},"cover_1": {"model": "tesserakt:tesserakt_cover","x":270},"cover_2": { "model": "tesserakt:tesserakt_cover", "x": 90 },"cover_3": { "model": "tesserakt:tesserakt_cover"},"cover_4": { "model": "tesserakt:tesserakt_cover","y":90},"cover_5": { "model": "tesserakt:tesserakt_cover","y":180},"cover_6": { "model": "tesserakt:tesserakt_cover","y":270}}}
+	}
   }
+
 }
