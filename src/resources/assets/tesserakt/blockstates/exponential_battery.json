@@ -1,0 +1,29 @@
+{
+  "forge_marker": 1,
+  "defaults": {
+    "model": "tesserakt:exponential_battery"
+  },
+  "variants": {
+    "inventory": [{}],
+	"facing":
+	{
+		"up":{},
+		"down":{x:180},
+		"east":{y:90,x:90},
+		"west":{y:90,x:-90},
+		"north":{x:90},
+		"south":{x:-90}
+	},
+	"charge":
+	{
+	0:{textures:{"1":"tesserakt:blocks/battery/charge_0"}},
+	1:{textures:{"1":"tesserakt:blocks/battery/charge_1"}},
+	2:{textures:{"1":"tesserakt:blocks/battery/charge_2"}},
+	3:{textures:{"1":"tesserakt:blocks/battery/charge_3"}},
+	4:{textures:{"1":"tesserakt:blocks/battery/charge_4"}},
+	5:{textures:{"1":"tesserakt:blocks/battery/charge_5"}},
+	6:{textures:{"1":"tesserakt:blocks/battery/charge_6"}},
+	7:{textures:{"1":"tesserakt:blocks/battery/charge_7"}}
+	}
+  }
+}

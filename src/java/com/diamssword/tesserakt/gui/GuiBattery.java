@@ -4,22 +4,14 @@ import java.awt.Color;
 import java.io.IOException;
 
 import com.diamssword.tesserakt.Main;
-import com.diamssword.tesserakt.packets.PacketSendEnable;
-import com.diamssword.tesserakt.packets.PacketSendIO;
-import com.diamssword.tesserakt.packets.PacketSendNamesClient;
-import com.diamssword.tesserakt.storage.TesseraktData;
+import com.diamssword.tesserakt.render.tileentity.TESRExponentialBattery;
 import com.diamssword.tesserakt.tileentity.ExponentialBatteryTile;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.resources.I18n;
-import net.minecraft.init.Blocks;
-import net.minecraft.init.Items;
 import net.minecraft.inventory.Container;
-import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 
 public class GuiBattery extends GuiScreen {
@@ -54,14 +46,31 @@ public class GuiBattery extends GuiScreen {
 		midX = (this.width - this.xSize) / 2;
 		midY = ((this.height - this.ySize) / 2)+10;
 		drawTexturedModalRect(midX, midY+10, 0, 0, xSize, ySize);
+
+		int col =this.tile.getLevel();
+		if(col >= 7)
+			col=6;
+
+		int[] cls =TESRExponentialBattery.colorForLevel(col);
+		GlStateManager.color(cls[0]/255f,cls[1]/255f,cls[2]/255f);
 		double size=tile.getPercentFilled();
 		int i=(int)(100d*size);
 		drawTexturedModalRect(midX+13, (int)(midY+10+31+(100d-i)), 176, 0, 10, i);
-		size=tile.getAdditionalPercentFilled();
-		i=(int)(100d*size);
-		drawTexturedModalRect(midX+153, (int)(midY+10+31+(100d-i)), 176, 0, 10,i);
+		if(tile.getMaxEnergy() != Integer.MAX_VALUE)
+		{
+			size=tile.getAdditionalPercentFilled();
+			i=(int)(100d*size);
 
-		//GlStateManager.color(colorRed, colorGreen, colorBlue);
+			cls =TESRExponentialBattery.colorForLevel(7);
+			GlStateManager.color(cls[0]/255f,cls[1]/255f,cls[2]/255f);
+			drawTexturedModalRect(midX+153, (int)(midY+10+31+(100d-i)), 176, 0, 10,i);
+		}
+		else
+		{
+			GlStateManager.color(1, 1, 1);
+			drawTexturedModalRect(midX+153, (int)(midY+10+31), 186, 0, 10,100);
+		}
+		GlStateManager.color(1, 1, 1);
 	}
 
 	public boolean doesGuiPauseGame()
@@ -88,9 +97,10 @@ public class GuiBattery extends GuiScreen {
 		int color = new Color(255,col,0).getRGB();
 		this.fontRenderer.drawString(name, midX+5, midY+15,color);
 
-		this.fontRenderer.drawString("I/O: "+formatPower(this.tile.getMaxIO()) +"FE", midX+28, midY+80,4210752);
-		this.fontRenderer.drawString("Stored: "+formatPower(this.tile.getEnergy()) +"FE", midX+28, midY+40,4210752);
-		this.fontRenderer.drawString("Max: "+formatPower(this.tile.getMaxEnergy()) +"FE", midX+28, midY+60,4210752);
+		this.fontRenderer.drawString("I/O: "+formatPower(this.tile.getMaxIO()) +"FE/t", midX+38, midY+80,4210752);
+		this.fontRenderer.drawString("Stored: "+formatPower(this.tile.getEnergy()) +"FE", midX+38, midY+40,4210752);
+		this.fontRenderer.drawString("Max: "+formatPower(this.tile.getMaxEnergy()) +"FE", midX+38, midY+60,4210752);
+		this.fontRenderer.drawString("OverCharge: "+formatPower(this.tile.getAdditionalEnergy()) +"FE", midX+38, midY+100,4210752);
 	}
 	private String formatPower(int pow)
 	{

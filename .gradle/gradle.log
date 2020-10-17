@@ -35,7 +35,7 @@ Note: Recompile with -Xlint:deprecation for details.
 :reobfJar
 :extractAnnotationsJar
 :extractRangemapReplacedMain
-C:\Users\Diamssword\Documents\MCModding\Tesseract\build\sources\main\java
+C:\Users\DUBAUT\git\TesseraktMod\build\sources\main\java
 :retromapReplacedMain
 remapping source...
 :sourceJar
@@ -45,4 +45,4 @@ remapping source...
 
 BUILD SUCCESSFUL
 
-Total time: 15.287 secs
+Total time: 28.999 secs

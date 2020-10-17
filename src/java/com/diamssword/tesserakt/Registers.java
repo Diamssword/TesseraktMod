@@ -48,7 +48,6 @@ public class Registers {
 		public static ExponentialBatteryBlock exponentialBattery= new ExponentialBatteryBlock();
 		public static EnderWoolBlock blockEnderWool= new EnderWoolBlock("ender_wool");
 		public static EnderStar ItemEnderStar= new EnderStar();
-		public static DimensionalBatteryBlock blockDimensionalBattery = new DimensionalBatteryBlock();
 		public static List<Block> blocks= new ArrayList<Block>();
 		public static List<Item> items= new ArrayList<Item>();
 		static {
@@ -109,7 +108,6 @@ public class Registers {
 			ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(blockTesserakt), 0, new ModelResourceLocation(blockTesserakt.getRegistryName(), "inventory"));
 			ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(blockFrameFull), 0, new ModelResourceLocation(blockFrameFull.getRegistryName(), "inventory"));
 			ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(blockFrameEmpty), 0, new ModelResourceLocation(blockFrameEmpty.getRegistryName(), "inventory"));
-			ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(blockDimensionalBattery), 0, new ModelResourceLocation(blockDimensionalBattery.getRegistryName(), "inventory"));
 			ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(blockEnderWool), 0, new ModelResourceLocation(blockEnderWool.getRegistryName(), "inventory"));
 			ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(exponentialBattery), 0, new ModelResourceLocation(exponentialBattery.getRegistryName(), "inventory"));
 			for(Item b: items)

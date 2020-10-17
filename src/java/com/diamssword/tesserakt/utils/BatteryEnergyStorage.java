@@ -66,6 +66,8 @@ public class BatteryEnergyStorage extends EnergyStorage{
 			return 0;
 		if(energy == capacity)
 		{
+			if(this.capacity == Integer.MAX_VALUE)
+				return 0;
 			int energyReceived = Math.min(capacity - aditionalenergy, Math.min(this.maxReceive, maxReceive));
 			if (!simulate)
 			{

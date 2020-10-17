@@ -2,6 +2,10 @@ package com.diamssword.tesserakt.tileentity;
 
 import javax.annotation.Nullable;
 
+import com.diamssword.tesserakt.Main;
+import com.diamssword.tesserakt.Registers;
+import com.diamssword.tesserakt.blocks.ExponentialBatteryBlock;
+import com.diamssword.tesserakt.packets.PacketRequestTile;
 import com.diamssword.tesserakt.utils.BatteryEnergyStorage;
 
 import net.minecraft.block.state.IBlockState;
@@ -11,6 +15,8 @@ import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.fml.relauncher.Side;
@@ -24,8 +30,15 @@ public class ExponentialBatteryTile extends TileEntity implements ITickable{
 		{
 			storage.changed=false;
 			IBlockState st = world.getBlockState(pos);
+			st = st.withProperty(ExponentialBatteryBlock.LEVEL, this.getLevel());
+			world.setBlockState(pos, st);
 			world.notifyBlockUpdate(pos, st,st, 3);
 		}
+	}
+	@Override
+	public boolean shouldRefresh(World world, BlockPos pos, IBlockState oldState, IBlockState newSate)
+	{
+		return false;
 	}
 	@Override
 	public NBTTagCompound writeToNBT(NBTTagCompound tag) {
@@ -89,6 +102,11 @@ public class ExponentialBatteryTile extends TileEntity implements ITickable{
 	{
 		return this.storage.getEnergyStored();
 	}
+	@SideOnly(Side.CLIENT)
+	public int getAdditionalEnergy()
+	{
+		return this.storage.getAdditionalEnergy();
+	}
 	public void setEnergy(BatteryEnergyStorage st)
 	{
 		this.storage = st;
@@ -104,5 +122,34 @@ public class ExponentialBatteryTile extends TileEntity implements ITickable{
 	public void onDataPacket(NetworkManager net, SPacketUpdateTileEntity packet) {
 		readFromNBT(packet.getNbtCompound());
 		world.notifyNeighborsOfStateChange(pos, blockType, true);
+	}
+	public int getLevel()
+	{
+		if(this.storage != null)
+		{
+			int i= Math.round(Math.round(this.getPercentFilled() * 7d));
+			if(this.getPercentFilled()<=0 && i>0)
+				i=0;
+			if(this.getPercentFilled()<1 && i>=7)
+				i=6;
+			return i;
+		}
+		return 0;
+	}
+	@Override
+	public void onLoad()
+	{
+		if(this.world != null && !this.world.isRemote)
+		{
+
+			IBlockState st = world.getBlockState(pos);
+			world.notifyBlockUpdate(pos,st, st.withProperty(ExponentialBatteryBlock.LEVEL, this.getLevel()), 3);
+			world.setBlockState(pos, st.withProperty(ExponentialBatteryBlock.LEVEL, this.getLevel()));
+			world.notifyNeighborsOfStateChange(pos, Registers.exponentialBattery, true);
+		}
+		if(this.world.isRemote)
+		{
+			Main.network.sendToServer(new PacketRequestTile(this.getPos()));
+		}
 	}
 }

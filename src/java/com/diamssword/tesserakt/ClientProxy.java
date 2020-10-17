@@ -5,9 +5,9 @@ import com.diamssword.tesserakt.dimensional_bag.DimBagOutTile;
 import com.diamssword.tesserakt.events.ClientEvents;
 import com.diamssword.tesserakt.render.tileentity.StarSkyRender;
 import com.diamssword.tesserakt.render.tileentity.TESRDimBagOut;
-import com.diamssword.tesserakt.render.tileentity.TESRDimensionalBattery;
+import com.diamssword.tesserakt.render.tileentity.TESRExponentialBattery;
 import com.diamssword.tesserakt.render.tileentity.TESRTesserakt;
-import com.diamssword.tesserakt.tileentity.DimensionalBatteryTile;
+import com.diamssword.tesserakt.tileentity.ExponentialBatteryTile;
 import com.diamssword.tesserakt.tileentity.TesseraktTile;
 
 import net.minecraft.client.Minecraft;
@@ -45,7 +45,7 @@ public class ClientProxy extends CommonProxy{
 	@Override
 	public void registerRenderers() {
 		ClientRegistry.bindTileEntitySpecialRenderer(TesseraktTile.class, new TESRTesserakt());
-		ClientRegistry.bindTileEntitySpecialRenderer(DimensionalBatteryTile.class, new TESRDimensionalBattery());
+		ClientRegistry.bindTileEntitySpecialRenderer(ExponentialBatteryTile.class, new TESRExponentialBattery());
 		ClientRegistry.bindTileEntitySpecialRenderer(DimBagOutTile.class, new TESRDimBagOut());
 	}
 	public void updateClientSky(BlockPos pos,int size)
