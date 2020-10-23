@@ -4,11 +4,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.diamssword.tesserakt.blocks.CraftBlock;
-import com.diamssword.tesserakt.blocks.DimensionalBatteryBlock;
 import com.diamssword.tesserakt.blocks.EmptyBlock;
 import com.diamssword.tesserakt.blocks.EnderWoolBlock;
 import com.diamssword.tesserakt.blocks.ExponentialBatteryBlock;
 import com.diamssword.tesserakt.blocks.TesseraktBlock;
+import com.diamssword.tesserakt.items.BatteryPart;
 import com.diamssword.tesserakt.items.EnderStar;
 import com.diamssword.tesserakt.tileentity.ExponentialBatteryTile;
 import com.diamssword.tesserakt.tileentity.FrameTile;
@@ -48,10 +48,12 @@ public class Registers {
 		public static ExponentialBatteryBlock exponentialBattery= new ExponentialBatteryBlock();
 		public static EnderWoolBlock blockEnderWool= new EnderWoolBlock("ender_wool");
 		public static EnderStar ItemEnderStar= new EnderStar();
+		public static BatteryPart BatteryPart = new BatteryPart();
 		public static List<Block> blocks= new ArrayList<Block>();
 		public static List<Item> items= new ArrayList<Item>();
 		static {
 			items.add(ItemEnderStar);
+			items.add(BatteryPart);
 		}
 		@SubscribeEvent
 		public static void registerBlock(RegistryEvent.Register<Block> e)

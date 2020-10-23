@@ -4,6 +4,7 @@ import javax.annotation.Nullable;
 
 import com.diamssword.tesserakt.Configs;
 import com.diamssword.tesserakt.Registers;
+import com.diamssword.tesserakt.blocks.CraftBlock;
 import com.diamssword.tesserakt.blocks.EmptyBlock;
 
 import net.minecraft.block.state.IBlockState;
@@ -23,7 +24,8 @@ import net.minecraftforge.fluids.capability.IFluidTankProperties;
 public class FrameTile extends TileEntity {
 	private int amount=0;
 	private static Fluid ender=null;
-
+	private static Fluid red=null;
+	private boolean isRedstone=false;
 	public FrameTile()
 	{
 		if(ender == null)
@@ -32,6 +34,7 @@ public class FrameTile extends TileEntity {
 			if(ender == null)
 			{
 				ender = FluidRegistry.LAVA;
+				Configs.enderFluid=  FluidRegistry.LAVA.getName();
 			}
 		}
 	}
@@ -39,11 +42,13 @@ public class FrameTile extends TileEntity {
 	@Override
 	public NBTTagCompound writeToNBT(NBTTagCompound tag) {
 		tag.setInteger("amount", this.amount);
+		tag.setBoolean("alt", this.isRedstone);
 		return super.writeToNBT(tag);
 	}
 	@Override
 	public void readFromNBT(NBTTagCompound nbt) {
 		this.amount = nbt.getInteger("amount");
+		this.isRedstone = nbt.getBoolean("alt");
 		super.readFromNBT(nbt);
 	}
 	@Override
@@ -72,7 +77,7 @@ public class FrameTile extends TileEntity {
 
 				@Override
 				public FluidStack getContents() {
-					return new FluidStack(ender,amount);
+					return new FluidStack(isRedstone?red:ender,amount);
 				}
 
 				@Override
@@ -92,7 +97,9 @@ public class FrameTile extends TileEntity {
 
 				@Override
 				public boolean canFillFluidType(FluidStack fluidStack) {
-					return fluidStack.getFluid().equals(ender);
+					if(amount==0)
+						return fluidStack.getFluid().equals(ender) ||fluidStack.getFluid().equals(red);
+					return fluidStack.getFluid().equals(isRedstone?red:ender);
 				}
 
 				@Override
@@ -103,6 +110,11 @@ public class FrameTile extends TileEntity {
 
 		@Override
 		public int fill(FluidStack resource, boolean doFill) {
+			if(amount ==0)
+				if(resource.getFluid().equals(red))
+					isRedstone=true;
+				else
+					isRedstone=false;
 			int res= resource.amount +amount;
 			int ret = resource.amount;
 			if(res >1000)
@@ -128,7 +140,7 @@ public class FrameTile extends TileEntity {
 
 		@Override
 		public FluidStack drain(int maxDrain, boolean doDrain) {
-			return new FluidStack(ender, 0);
+			return new FluidStack(isRedstone?red:ender, 0);
 		}};
 		public void transform()
 		{
@@ -136,7 +148,7 @@ public class FrameTile extends TileEntity {
 			{
 				if(this.amount>=1000)
 				{
-					this.world.setBlockState(pos, Registers.blockFrameFull.getDefaultState());
+					this.world.setBlockState(pos, Registers.blockFrameFull.getDefaultState().withProperty(CraftBlock.TYPE, this.isRedstone));
 					this.invalidate();
 				}
 				else
@@ -148,8 +160,9 @@ public class FrameTile extends TileEntity {
 				}
 			}
 		}
+		@Override
 		public boolean shouldRefresh(World world, BlockPos pos, IBlockState oldState, IBlockState newSate)
 		{
-			return false;
+			return oldState.getBlock() != newSate.getBlock();
 		}
 }

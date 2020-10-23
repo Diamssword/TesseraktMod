@@ -36,7 +36,7 @@ public class Main {
 	}
 	public static final String MODID = "tesserakt";
 	public static final String MODNAME = "Tesserakt";
-	public static final String VERSION = "1.4";
+	public static final String VERSION = "2.1";
 	public static SimpleNetworkWrapper network;
 	public static Configuration config;
 

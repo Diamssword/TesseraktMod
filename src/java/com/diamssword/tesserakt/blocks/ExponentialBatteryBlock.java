@@ -28,7 +28,9 @@ public class ExponentialBatteryBlock  extends Block{
 	public ExponentialBatteryBlock() {
 		super(Material.IRON);
 		this.setRegistryName("exponential_battery");
-
+		this.setHardness(5);
+		this.setResistance(5000f);
+		this.setHarvestLevel("pickaxe", 1);
 		this.setUnlocalizedName(Main.MODID+".exponential_battery");
 		this.setCreativeTab(Registers.tab);
 

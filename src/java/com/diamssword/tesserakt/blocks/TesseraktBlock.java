@@ -23,6 +23,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
@@ -70,7 +71,12 @@ public class TesseraktBlock extends Block{
 			if(playerIn.isSneaking())
 			{
 				if(worldIn.setBlockToAir(pos))
-					state.getBlock().dropBlockAsItem(worldIn, pos, state, 0);
+				{
+			        NonNullList<ItemStack> ret = NonNullList.create();
+			        this.getDrops(ret,worldIn, pos, state, 0);
+					for(ItemStack drop : ret)
+						Block.spawnAsEntity(worldIn, pos, drop);
+				}
 				return true;
 			}
 		}

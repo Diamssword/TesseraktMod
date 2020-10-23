@@ -48,8 +48,12 @@ public class ClientEvents {
 			{
 				for(int j=0;j<items[i].length;j++)
 				{
-					mc.getRenderItem().renderItemIntoGUI(items[i][j],  posX+(j*16),posY+(i*16));
-					mc.getRenderItem().renderItemOverlayIntoGUI(mc.fontRenderer, items[i][j],posX+(j*16),posY+(i*16), null);
+					ItemStack st=items[i][j];
+					if(st != null)
+					{
+						mc.getRenderItem().renderItemIntoGUI(st,  posX+(j*16),posY+(i*16));
+						mc.getRenderItem().renderItemOverlayIntoGUI(mc.fontRenderer, items[i][j],posX+(j*16),posY+(i*16), null);
+					}
 
 				}
 			}

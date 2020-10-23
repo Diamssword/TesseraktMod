@@ -9,6 +9,7 @@ import com.diamssword.tesserakt.packets.PacketRequestTile;
 import com.diamssword.tesserakt.utils.BatteryEnergyStorage;
 
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SPacketUpdateTileEntity;
@@ -19,8 +20,11 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.energy.CapabilityEnergy;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraftforge.energy.IEnergyStorage;
+import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
+import net.minecraftforge.fluids.capability.IFluidHandler;
+import net.minecraftforge.items.CapabilityItemHandler;
+import net.minecraftforge.items.IItemHandler;
 
 public class ExponentialBatteryTile extends TileEntity implements ITickable{
 	BatteryEnergyStorage storage = new BatteryEnergyStorage(100, 0,this.world,this.pos);
@@ -31,14 +35,33 @@ public class ExponentialBatteryTile extends TileEntity implements ITickable{
 			storage.changed=false;
 			IBlockState st = world.getBlockState(pos);
 			st = st.withProperty(ExponentialBatteryBlock.LEVEL, this.getLevel());
-			world.setBlockState(pos, st);
+			world.setBlockState(pos, st,3);
 			world.notifyBlockUpdate(pos, st,st, 3);
+			world.notifyNeighborsOfStateChange(pos, blockType, true);
+			this.pushTo(pos.up(), EnumFacing.DOWN);
+			this.pushTo(pos.down(), EnumFacing.UP);
+		}
+	}
+	private void pushTo(BlockPos pos,EnumFacing facing )
+	{
+		TileEntity te = world.getTileEntity(pos);
+		if(te != null)
+		{
+			if(storage != null && te.hasCapability(CapabilityEnergy.ENERGY, facing))
+			{
+				IEnergyStorage en =te.getCapability(CapabilityEnergy.ENERGY, facing);
+				if(en.canReceive())
+				{
+					int am=en.receiveEnergy(this.storage.getEnergyStored(), false);
+					this.storage.extractEnergy(am, false);
+				}
+			}
 		}
 	}
 	@Override
 	public boolean shouldRefresh(World world, BlockPos pos, IBlockState oldState, IBlockState newSate)
 	{
-		return false;
+		return oldState.getBlock() != newSate.getBlock();
 	}
 	@Override
 	public NBTTagCompound writeToNBT(NBTTagCompound tag) {
@@ -77,32 +100,26 @@ public class ExponentialBatteryTile extends TileEntity implements ITickable{
 		return super.hasCapability(capability, facing);
 	}
 
-	@SideOnly(Side.CLIENT)
 	public double getAdditionalPercentFilled()
 	{
 		return (double)this.storage.getAdditionalEnergy()/(double)this.storage.getMaxEnergyStored();
 	}
-	@SideOnly(Side.CLIENT)
 	public double getPercentFilled()
 	{
 		return (double)this.storage.getEnergyStored()/(double)this.storage.getMaxEnergyStored();
 	}
-	@SideOnly(Side.CLIENT)
 	public int getMaxIO()
 	{
 		return this.storage.getMaxIO();
 	}
-	@SideOnly(Side.CLIENT)
 	public int getMaxEnergy()
 	{
 		return this.storage.getMaxEnergyStored();
 	}
-	@SideOnly(Side.CLIENT)
 	public int getEnergy()
 	{
 		return this.storage.getEnergyStored();
 	}
-	@SideOnly(Side.CLIENT)
 	public int getAdditionalEnergy()
 	{
 		return this.storage.getAdditionalEnergy();
@@ -121,6 +138,11 @@ public class ExponentialBatteryTile extends TileEntity implements ITickable{
 
 	public void onDataPacket(NetworkManager net, SPacketUpdateTileEntity packet) {
 		readFromNBT(packet.getNbtCompound());
+		world.notifyNeighborsOfStateChange(pos, blockType, true);
+		IBlockState st = world.getBlockState(pos);
+		st = st.withProperty(ExponentialBatteryBlock.LEVEL, this.getLevel());
+		world.setBlockState(pos, st,3);
+		world.notifyBlockUpdate(pos, st,st, 3);
 		world.notifyNeighborsOfStateChange(pos, blockType, true);
 	}
 	public int getLevel()

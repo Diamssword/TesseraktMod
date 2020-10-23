@@ -39,7 +39,6 @@ public class Configs {
 					"512", // Default value
 					"The space beetween each room in the dimension"); // Comment
 			DimBagspacing =DimBag_spacing.getInt();
-			enderFluid = tesseraktFluid.getString();
 		} catch (Exception e) {
 		} finally {
 			if (config.hasChanged()) config.save();

@@ -2,8 +2,8 @@
 	"credit": "Made with Blockbench",
 	"textures": {
 		"0": "tesserakt:blocks/battery/battery",
-		"1": "tesserakt:blocks/battery/charge_2",
-		"particle": "tesserakt:blocks/battery/battery"
+		"1": "tesserakt:blocks/battery/charge_0",
+		"particle": "tesserakt:blocks/battery/charge_0"
 	},
 	"elements": [
 		{

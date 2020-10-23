@@ -11,6 +11,7 @@ import com.diamssword.tesserakt.utils.IIngredientDisplay;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
+import net.minecraft.block.properties.PropertyBool;
 import net.minecraft.block.properties.PropertyInteger;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
@@ -25,6 +26,9 @@ import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.NonNullList;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.SoundCategory;
+import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.IBlockAccess;
@@ -34,6 +38,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class CraftBlock extends Block implements IIngredientDisplay{
 	public static PropertyInteger COVERED = PropertyInteger.create("covered", 0,6);
+	public static PropertyBool TYPE = PropertyBool.create("redstone");
 	public CraftBlock(String name) {
 		super(Material.IRON);
 		this.setRegistryName(name);
@@ -47,7 +52,7 @@ public class CraftBlock extends Block implements IIngredientDisplay{
 	@Override
 	public BlockStateContainer createBlockState()
 	{
-		return new BlockStateContainer(this, COVERED);
+		return new BlockStateContainer(this, COVERED,TYPE);
 	}
 	@SideOnly(Side.CLIENT)
 	public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, ITooltipFlag advanced)
@@ -70,14 +75,24 @@ public class CraftBlock extends Block implements IIngredientDisplay{
 		ItemStack stack = playerIn.getHeldItem(hand);
 		if(stack.getItem() == Item.getItemFromBlock(Registers.blockEnderWool))
 		{
-			if( state.getValue(COVERED) <6)
+			if( state.getValue(COVERED) <6 && (!state.getValue(TYPE) || state.getValue(COVERED) == 0))
 			{
-				worldIn.setBlockState(pos, state.withProperty(COVERED, state.getValue(COVERED)+1));
+				worldIn.setBlockState(pos, state.withProperty(COVERED, state.getValue(COVERED)+1).withProperty(TYPE, false));
 				stack.shrink(1);
 				return true;
 			}
 		}
-		else if(stack.getItem() == Items.NETHER_STAR)
+		else if(stack.getItem() == Item.getItemFromBlock(Blocks.REDSTONE_BLOCK))
+		{
+			if( state.getValue(COVERED) < 6 && (state.getValue(TYPE) || state.getValue(COVERED) == 0))
+			{
+				worldIn.setBlockState(pos, state.withProperty(COVERED, state.getValue(COVERED)+1).withProperty(TYPE, true));
+				stack.shrink(1);
+				worldIn.playSound(pos.getX(), pos.getY(), pos.getZ(), new SoundEvent(new ResourceLocation("minecraft:entity.item.pickup")), SoundCategory.BLOCKS, 1f, (float)Math.random()*2f, true);
+				return true;
+			}
+		}
+		else if(stack.getItem() == Items.NETHER_STAR && state.getValue(COVERED)==6 && !state.getValue(TYPE))
 		{
 			if(!worldIn.isRemote)
 			{
@@ -122,6 +137,20 @@ public class CraftBlock extends Block implements IIngredientDisplay{
 				}
 			}
 		}
+		else if(stack.getItem() == Registers.ItemEnderStar && state.getValue(COVERED)==6 && state.getValue(TYPE))
+		{
+			if(!worldIn.isRemote)
+			{
+				worldIn.createExplosion(playerIn, pos.getX(),pos.getY(),pos.getZ(), 0.5f, true);
+				worldIn.setBlockToAir(pos);
+				EntityItem item =new EntityItem(worldIn, pos.getX(), pos.getY(), pos.getZ(), new ItemStack(Registers.BatteryPart));
+				item.setNoGravity(true);
+				item.setEntityInvulnerable(true);
+				item.setGlowing(true);
+				item.motionY=-1;
+				worldIn.spawnEntity(item);
+			}
+		}
 		return false;
 	}
 	public boolean isOpaqueCube(IBlockState state)
@@ -154,7 +183,10 @@ public class CraftBlock extends Block implements IIngredientDisplay{
 	@Override
 	public IBlockState getStateFromMeta(int meta)
 	{
-		return this.getDefaultState().withProperty(COVERED, meta);
+		boolean type= false;
+		if(meta >6)
+			type=true;
+		return this.getDefaultState().withProperty(COVERED, type?meta-6:meta).withProperty(TYPE, type);
 	}
 
 	/**
@@ -163,19 +195,24 @@ public class CraftBlock extends Block implements IIngredientDisplay{
 	@Override
 	public int getMetaFromState(IBlockState state)
 	{
-		return state.getValue(COVERED);
+		boolean type= state.getValue(TYPE);
+		int i=state.getValue(COVERED);
+		return type? i+6:i;
 	}
 	private ItemStack obsi =new ItemStack(Blocks.OBSIDIAN);
 	private ItemStack star =new ItemStack(Items.NETHER_STAR);
 	private ItemStack[][] ingrs = new ItemStack[][] {{obsi,obsi,obsi},{obsi,star,obsi},{obsi,obsi,obsi}};
 	@Override
 	public ItemStack[][] toDisplay(IBlockState state) {
-		int i = state.getValue(COVERED);
-		if(i<6)
-			return new ItemStack[][] {{new ItemStack(Registers.blockEnderWool,6-state.getValue(COVERED))}};
-			else
-			{
-				return ingrs;
-			}
+		if(state.getValue(COVERED)==0)
+			return new ItemStack[][] {{new ItemStack(Registers.blockEnderWool,6)},{new ItemStack(Blocks.REDSTONE_BLOCK,6)}};
+			int i = state.getValue(COVERED);
+			Block b = state.getValue(TYPE)? Blocks.REDSTONE_BLOCK : Registers.blockEnderWool;
+			if(i<6)
+				return new ItemStack[][] {{new ItemStack(b,6-i)}};
+				else if(state.getValue(TYPE))
+					return new ItemStack[][] {{new ItemStack(Registers.ItemEnderStar)}};
+					else
+						return ingrs;
 	}
 }

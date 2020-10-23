@@ -322,7 +322,7 @@ public class TesseraktTile extends TileEntity implements ITickable{
 	@Override
 	public boolean shouldRefresh(World world, BlockPos pos, IBlockState oldState, IBlockState newSate)
 	{
-		return false;
+		return oldState.getBlock() != newSate.getBlock();
 	}
 	@Nullable
 	public SPacketUpdateTileEntity getUpdatePacket()
@@ -356,4 +356,5 @@ public class TesseraktTile extends TileEntity implements ITickable{
 			Main.network.sendToServer(new PacketRequestTile(this.getPos()));
 		}
 	}
+	
 }

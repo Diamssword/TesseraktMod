@@ -117,7 +117,7 @@ public class EmptyBlock extends Block implements IIngredientDisplay{
 					FluidActionResult res=FluidUtil.tryEmptyContainer(stack, tile.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, facing), 1000, playerIn, true);
 					if(res.success)
 					{
-						worldIn.setBlockState(pos, Registers.blockFrameFull.getDefaultState());
+						worldIn.setBlockState(pos, Registers.blockFrameFull.getDefaultState().withProperty(CraftBlock.COVERED, 0).withProperty(CraftBlock.TYPE, false));
 						playerIn.setHeldItem(hand, res.getResult());
 						return true;
 					}
