@@ -10,6 +10,8 @@ import com.diamssword.tesserakt.packets.PacketSendEnergy;
 import com.diamssword.tesserakt.packets.PacketSendEnergy.HandlerSendEnergy;
 import com.diamssword.tesserakt.packets.PacketSendIO;
 import com.diamssword.tesserakt.packets.PacketSendIO.HandlerSendIO;
+import com.diamssword.tesserakt.packets.PacketSendIOEnergy;
+import com.diamssword.tesserakt.packets.PacketSendIOEnergy.HandlerSendIOEnergy;
 import com.diamssword.tesserakt.packets.PacketSendNames;
 import com.diamssword.tesserakt.packets.PacketSendNames.HandlerSendNames;
 import com.diamssword.tesserakt.packets.PacketSendNamesClient;
@@ -36,7 +38,7 @@ public class Main {
 	}
 	public static final String MODID = "tesserakt";
 	public static final String MODNAME = "Tesserakt";
-	public static final String VERSION = "2.1";
+	public static final String VERSION = "2.3";
 	public static SimpleNetworkWrapper network;
 	public static Configuration config;
 
@@ -64,6 +66,7 @@ public class Main {
 		Main.network.registerMessage(HandlerSendNamesClient.class, PacketSendNamesClient.class, 1, Side.SERVER);
 		Main.network.registerMessage(HandlerSendEnable.class, PacketSendEnable.class, 2, Side.SERVER);
 		Main.network.registerMessage(HandlerSendIO.class, PacketSendIO.class, 3, Side.SERVER);
+		Main.network.registerMessage(HandlerSendIOEnergy.class, PacketSendIOEnergy.class, 6, Side.SERVER);
 		Main.network.registerMessage(HandlerRequestTile.class, PacketRequestTile.class, 4, Side.SERVER);
 		Main.network.registerMessage(HandlerSendEnergy.class, PacketSendEnergy.class, 5, Side.CLIENT);
 	}

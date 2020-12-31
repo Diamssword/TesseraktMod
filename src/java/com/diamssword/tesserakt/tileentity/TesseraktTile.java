@@ -1,5 +1,7 @@
 package com.diamssword.tesserakt.tileentity;
 
+import java.util.UUID;
+
 import javax.annotation.Nullable;
 
 import com.diamssword.tesserakt.Main;
@@ -41,6 +43,7 @@ public class TesseraktTile extends TileEntity implements ITickable{
 	private  int ioItem=3;
 	private  int ioFluid=3;
 	private  int ioRedstone=0;
+	private UUID owner=null;
 	private boolean shouldUpdate = false;
 	@Override
 	public void update() {
@@ -53,7 +56,14 @@ public class TesseraktTile extends TileEntity implements ITickable{
 		{
 			if(tesseract == null && this.connected)
 			{
-				this.tesseract =Tesserakt.get(this.world, id);
+				if(this.owner== null)
+				{
+					this.tesseract =Tesserakt.get(this.world, id);
+				}
+				else
+				{
+					this.tesseract =Tesserakt.getPrivate(this.world, owner, id);
+				}
 				Tesserakt.save(this.world, tesseract);
 				if(tesseract != null)
 				{
@@ -138,6 +148,8 @@ public class TesseraktTile extends TileEntity implements ITickable{
 		tag.setInteger("ioItem", this.ioItem);
 		tag.setInteger("ioFluid", this.ioFluid);
 		tag.setInteger("ioRedstone", this.ioRedstone);
+		if(owner != null)
+			tag.setString("owner", this.owner.toString());
 		return super.writeToNBT(tag);
 	}
 	@Override
@@ -149,6 +161,16 @@ public class TesseraktTile extends TileEntity implements ITickable{
 		this.ioFluid = nbt.getInteger("ioFluid");
 		this.connected = nbt.getBoolean("connected");
 		this.ioRedstone =  nbt.getInteger("ioRedstone");
+		if(nbt.hasKey("owner"))
+		{
+			try{
+				this.owner=UUID.fromString(nbt.getString("owner"));
+			}catch(IllegalArgumentException e)
+			{
+				this.owner = null;
+			}
+
+		}
 		super.readFromNBT(nbt);
 	}
 
@@ -185,7 +207,7 @@ public class TesseraktTile extends TileEntity implements ITickable{
 			this.markDirty();
 			shouldUpdate=true;
 		}
-	/*	IBlockState st = world.getBlockState(pos);
+		/*	IBlockState st = world.getBlockState(pos);
 		world.notifyBlockUpdate(pos,st, st.withProperty(TesseraktBlock.CONNECTED, this.connected), 3);
 		world.notifyBlockUpdate(pos, st.withProperty(TesseraktBlock.CONNECTED, !this.connected),st.withProperty(TesseraktBlock.CONNECTED, this.connected), 3);
 		world.notifyNeighborsOfStateChange(pos, Registers.blockTesserakt, true);*/
@@ -291,6 +313,8 @@ public class TesseraktTile extends TileEntity implements ITickable{
 	public ItemStack toItemNBT()
 	{
 		ItemStack stack=new ItemStack(Registers.blockTesserakt,1);
+		if(this.getOwner() != null)
+			stack.setItemDamage(1);
 		NBTTagCompound tag = new NBTTagCompound (); 
 		tag.setInteger("channel", this.id);
 		tag.setInteger("ioEnergy", this.ioEnergy);
@@ -356,5 +380,14 @@ public class TesseraktTile extends TileEntity implements ITickable{
 			Main.network.sendToServer(new PacketRequestTile(this.getPos()));
 		}
 	}
-	
+
+	public void setOwner(UUID uniqueID) {
+		this.owner = uniqueID;
+		this.markDirty();
+		
+	}
+
+	public UUID getOwner() {
+		return this.owner;
+	}
 }

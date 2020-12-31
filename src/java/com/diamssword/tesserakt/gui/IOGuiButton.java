@@ -59,7 +59,6 @@ private String[] modes = new String[] {"Disabled","Input","Output","In/Out"};
 	            GlStateManager.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
 	            this.drawTexturedModalRect(this.x, this.y, this.textX, this.textY +  (k * this.height), this.width , this.height);
 	            this.drawTexturedModalRect(this.x, this.y, this.textX+this.width, this.textY +  (mode * this.height), this.width , this.height);
-	      //      this.drawTexturedModalRect(img, this.x, this.y, this.textX, this.textY + (k * this.height), this.width, this.height, 200, 20, 2, 3, 2, 2, this.zLevel);
 	            this.mouseDragged(mc, mouseX, mouseY);
 	        	if(this.hovered)
 	        	{

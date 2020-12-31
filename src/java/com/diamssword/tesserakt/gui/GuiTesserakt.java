@@ -2,6 +2,8 @@ package com.diamssword.tesserakt.gui;
 
 import java.awt.Color;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 import com.diamssword.tesserakt.Main;
 import com.diamssword.tesserakt.packets.PacketSendEnable;
@@ -59,7 +61,21 @@ public class GuiTesserakt extends GuiScreen {
 		this.idField.setFocused(false);
 		this.idField.setText(tile.getChannel()+"");
 		this.nameField.setMaxStringLength(20);
-		if(TesseraktData.names != null)
+		if(tile.getOwner() != null)
+		{
+			if(TesseraktData.privatenames != null)
+			{
+				Map<Integer,String> map=TesseraktData.privatenames.get(tile.getOwner());
+				if(map != null)
+				{
+					String txt=map.get(tile.getChannel());
+					if(txt == null)
+						txt="";
+					this.nameField.setText(txt);
+				}
+			}
+		}
+		else if(TesseraktData.names != null)
 		{
 			String txt=TesseraktData.names.get(tile.getChannel());
 			if(txt == null)
@@ -105,9 +121,24 @@ public class GuiTesserakt extends GuiScreen {
 		super.drawScreen(mouseX, mouseY, partialTicks);
 		this.idField.drawTextBox();
 		this.nameField.drawTextBox();
-		if(TesseraktData.names != null)
+		Map<Integer,String> names = new HashMap<Integer,String>();
+		if(tile.getOwner() != null)
 		{
-			Integer[] keys =TesseraktData.names.keySet().toArray(new Integer[0]);
+			if(TesseraktData.privatenames != null)
+			{
+				Map<Integer,String> map1=TesseraktData.privatenames.get(tile.getOwner());
+				if(map1 ==null)
+					map1= new HashMap<Integer,String>();
+				names=map1;
+			}
+		}
+		else
+		{
+			names=TesseraktData.names;
+		}
+		if(names != null)
+		{
+			Integer[] keys =names.keySet().toArray(new Integer[0]);
 			for(int i = offset;i<offset+10;i++)
 			{
 				if(i>=keys.length) break;
@@ -117,7 +148,7 @@ public class GuiTesserakt extends GuiScreen {
 					mc.getTextureManager().bindTexture(BG_TEXTURE);
 					drawTexturedModalRect(midX+8, midY+70+(10*(i-offset))-1, 0, 166, 128, 10);
 				}
-				this.drawString(this.fontRenderer, TesseraktData.names.get(keys[i]), midX+9, midY+70+(10*(i-offset)), Color.white.getRGB());
+				this.drawString(this.fontRenderer, names.get(keys[i]), midX+9, midY+70+(10*(i-offset)), Color.white.getRGB());
 			}
 		}
 		ioEn.setMode(tile.getIoEnergy());
@@ -158,7 +189,10 @@ public class GuiTesserakt extends GuiScreen {
 				String name =this.nameField.getText().trim();
 				if(!name.isEmpty())
 				{
-					Main.network.sendToServer(new PacketSendNamesClient(chan,name));
+					if(tile.getOwner() != null)
+						Main.network.sendToServer(new PacketSendNamesClient(chan,name,tile.getOwner()));
+					else
+						Main.network.sendToServer(new PacketSendNamesClient(chan,name));
 				}
 			}catch(NumberFormatException e) {}
 		}
@@ -166,15 +200,18 @@ public class GuiTesserakt extends GuiScreen {
 		{
 			try {
 				int chan = Integer.parseInt(this.idField.getText());
+				if(tile.getOwner() != null)
+					Main.network.sendToServer(new PacketSendNamesClient(chan,"",true,tile.getOwner()));
+				else
 				Main.network.sendToServer(new PacketSendNamesClient(chan,"",true));
 			}catch(NumberFormatException e) {}
 		}
-		if(button.id == 5 ) //remove name
+		if(button.id == 5 )
 		{
 			if(this.offset >0)
 				this.offset--;
 		}
-		if(button.id == 6 ) //remove name
+		if(button.id == 6 ) 
 		{
 			this.offset++;
 		}
@@ -231,12 +268,37 @@ public class GuiTesserakt extends GuiScreen {
 				}
 			}
 	}
+	private void checkListClickPrivate(int mouseX, int mouseY)
+	{
+		int i = mouseX-midX;
+		int j = mouseY-midY;
+		if(i >=8 && j>=68 && i<=135 && j <=169)
+		{
+			if(TesseraktData.privatenames != null)
+			{
+				Map<Integer,String> map= TesseraktData.privatenames.get(tile.getOwner());
+				if(map != null)
+				{
+					Integer[] keys =map.keySet().toArray(new Integer[0]);
+					int selected = ((j - 68)/10);
+					if(selected+offset < keys.length)
+					{
+						this.nameField.setText(map.get(keys[selected+offset]));
+						this.idField.setText(keys[selected+offset]+"");
+					}
+				}
+			}
+		}
+	}
 	protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException
 	{
 		super.mouseClicked(mouseX, mouseY, mouseButton);
 		this.idField.mouseClicked(mouseX, mouseY, mouseButton);
 		this.nameField.mouseClicked(mouseX, mouseY, mouseButton);
-		this.checkListClick(mouseX, mouseY);
+		if(tile.getOwner() != null)
+			this.checkListClickPrivate(mouseX, mouseY);
+		else
+			this.checkListClick(mouseX, mouseY);
 	}
 	protected void keyTyped(char typedChar, int keyCode) throws IOException
 	{
@@ -250,12 +312,12 @@ public class GuiTesserakt extends GuiScreen {
 		{
 			if(Minecraft.getMinecraft().gameSettings.keyBindInventory.getKeyCode() == keyCode)
 			{
-				  this.mc.displayGuiScreen((GuiScreen)null);
+				this.mc.displayGuiScreen((GuiScreen)null);
 
-		            if (this.mc.currentScreen == null)
-		            {
-		                this.mc.setIngameFocus();
-		            }
+				if (this.mc.currentScreen == null)
+				{
+					this.mc.setIngameFocus();
+				}
 			}
 		}
 	}

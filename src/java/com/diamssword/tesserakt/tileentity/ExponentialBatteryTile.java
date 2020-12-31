@@ -7,6 +7,7 @@ import com.diamssword.tesserakt.Registers;
 import com.diamssword.tesserakt.blocks.ExponentialBatteryBlock;
 import com.diamssword.tesserakt.packets.PacketRequestTile;
 import com.diamssword.tesserakt.utils.BatteryEnergyStorage;
+import com.diamssword.tesserakt.utils.IOTileInterface;
 
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.item.ItemStack;
@@ -21,13 +22,10 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.energy.IEnergyStorage;
-import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
-import net.minecraftforge.fluids.capability.IFluidHandler;
-import net.minecraftforge.items.CapabilityItemHandler;
-import net.minecraftforge.items.IItemHandler;
 
-public class ExponentialBatteryTile extends TileEntity implements ITickable{
+public class ExponentialBatteryTile extends TileEntity implements ITickable,IOTileInterface{
 	BatteryEnergyStorage storage = new BatteryEnergyStorage(100, 0,this.world,this.pos);
+	int[] iomodes = new int[] {2,1,0,0,0,0};
 	@Override
 	public void update() {
 		if(!this.world.isRemote && storage != null && storage.changed)
@@ -38,25 +36,38 @@ public class ExponentialBatteryTile extends TileEntity implements ITickable{
 			world.setBlockState(pos, st,3);
 			world.notifyBlockUpdate(pos, st,st, 3);
 			world.notifyNeighborsOfStateChange(pos, blockType, true);
-			this.pushTo(pos.up(), EnumFacing.DOWN);
-			this.pushTo(pos.down(), EnumFacing.UP);
+			this.push();
 		}
 	}
-	private void pushTo(BlockPos pos,EnumFacing facing )
+	private void push()
 	{
-		TileEntity te = world.getTileEntity(pos);
-		if(te != null)
+		for(EnumFacing face : EnumFacing.values())
 		{
-			if(storage != null && te.hasCapability(CapabilityEnergy.ENERGY, facing))
+			int mode = iomodes[face.getIndex()];
+			if(mode != 0)
 			{
-				IEnergyStorage en =te.getCapability(CapabilityEnergy.ENERGY, facing);
-				if(en.canReceive())
+				TileEntity te = world.getTileEntity(pos.add(face.getDirectionVec()));
+				if(te != null)
 				{
-					int am=en.receiveEnergy(this.storage.getEnergyStored(), false);
-					this.storage.extractEnergy(am, false);
+					if(storage != null && te.hasCapability(CapabilityEnergy.ENERGY, face.getOpposite()))
+					{
+						IEnergyStorage en =te.getCapability(CapabilityEnergy.ENERGY, face.getOpposite());
+						if(mode != 1 && en.canReceive())
+						{
+							int am=en.receiveEnergy(this.storage.getEnergyStored(), false);
+							this.storage.extractEnergy(am, false);
+						}
+						if(mode != 2 && en.canReceive())
+						{
+							int am=	Math.min(this.storage.getMaxIO(),this.storage.receiveEnergy(this.storage.getMaxIO(), true));
+							int am1=en.extractEnergy(am, false);
+							this.storage.receiveEnergy(am1, false);
+						}
+					}
 				}
 			}
 		}
+
 	}
 	@Override
 	public boolean shouldRefresh(World world, BlockPos pos, IBlockState oldState, IBlockState newSate)
@@ -68,6 +79,7 @@ public class ExponentialBatteryTile extends TileEntity implements ITickable{
 		tag.setInteger("stored",this.storage.getEnergyStored());
 		tag.setInteger("additional",this.storage.getAdditionalEnergy());
 		tag.setInteger("max", this.storage.getMaxEnergyStored());
+		tag.setIntArray("io", iomodes);
 		return super.writeToNBT(tag);
 	}
 	@Override
@@ -77,6 +89,9 @@ public class ExponentialBatteryTile extends TileEntity implements ITickable{
 		{
 			storage = new BatteryEnergyStorage(max, nbt.getInteger("stored"),nbt.getInteger("additional"),this.world,this.pos);
 		}
+		iomodes= nbt.getIntArray("io");
+		if(iomodes.length<6)
+			iomodes = new int[] {0,0,0,0,0,0};
 		super.readFromNBT(nbt);
 	}
 	@SuppressWarnings("unchecked")
@@ -86,7 +101,9 @@ public class ExponentialBatteryTile extends TileEntity implements ITickable{
 
 		if(capability ==  CapabilityEnergy.ENERGY && storage != null)
 		{
-			return (T) storage;
+			int mode =iomodes[facing.getIndex()];
+			if(mode != 0)
+				return (T) storage;
 		}
 		return super.getCapability(capability, facing);
 	}
@@ -95,7 +112,9 @@ public class ExponentialBatteryTile extends TileEntity implements ITickable{
 	public boolean hasCapability(Capability<?> capability, @Nullable EnumFacing facing) {
 		if(capability ==  CapabilityEnergy.ENERGY)
 		{
-			return storage != null;
+			int mode =iomodes[facing.getIndex()];
+			if(mode != 0)
+				return storage != null;
 		}
 		return super.hasCapability(capability, facing);
 	}
@@ -173,5 +192,26 @@ public class ExponentialBatteryTile extends TileEntity implements ITickable{
 		{
 			Main.network.sendToServer(new PacketRequestTile(this.getPos()));
 		}
+	}
+	@Override
+	public int getMode(EnumFacing face) {
+
+		return this.iomodes[face.getIndex()];
+	}
+	@Override
+	public void setMode(EnumFacing face, int mode) {
+		if(mode >2)
+			mode=0;
+		this.iomodes[face.getIndex()] = mode;
+		this.markDirty();
+		IBlockState st = world.getBlockState(pos);
+		st = st.withProperty(ExponentialBatteryBlock.LEVEL, this.getLevel());
+		world.setBlockState(pos, st,3);
+		world.notifyBlockUpdate(pos, st,st, 3);
+		world.notifyNeighborsOfStateChange(pos, blockType, true);
+	}
+	@Override
+	public ItemStack getItemDisplay() {
+		return new ItemStack(this.blockType);
 	}
 }

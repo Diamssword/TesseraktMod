@@ -15,6 +15,7 @@ public class ModJEIPlugin implements IModPlugin  {
 	public void register(IModRegistry registry) {
 		registry.addIngredientInfo(new ItemStack(Registers.exponentialBattery), VanillaTypes.ITEM, Main.MODID+".battery.info");
 		registry.addIngredientInfo(new ItemStack(Registers.blockTesserakt), VanillaTypes.ITEM, Main.MODID+".tesserakt.info");
+		registry.addIngredientInfo(new ItemStack(Registers.blockTesserakt,1,1), VanillaTypes.ITEM, Main.MODID+".tesserakt.info");
 		registry.addIngredientInfo(new ItemStack(DimBagRefs.BagjerumItem), VanillaTypes.ITEM, Main.MODID+".dim_bag.info");
 		registry.addIngredientInfo(new ItemStack(Registers.BatteryPart), VanillaTypes.ITEM, Main.MODID+".battery_part.info");
 	}

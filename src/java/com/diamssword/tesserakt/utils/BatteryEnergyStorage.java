@@ -2,15 +2,9 @@ package com.diamssword.tesserakt.utils;
 
 import javax.annotation.Nullable;
 
-import com.diamssword.tesserakt.Main;
-import com.diamssword.tesserakt.packets.PacketSendEnergy;
-
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.energy.EnergyStorage;
-import net.minecraftforge.fml.common.network.NetworkRegistry.TargetPoint;
 
 public class BatteryEnergyStorage extends EnergyStorage{
 	public int aditionalenergy=0;
@@ -96,5 +90,6 @@ public class BatteryEnergyStorage extends EnergyStorage{
 	{
 		this.changed = true;
 	}
+	
 
 }

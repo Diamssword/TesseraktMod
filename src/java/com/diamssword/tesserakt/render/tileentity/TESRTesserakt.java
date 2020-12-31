@@ -23,16 +23,21 @@ public class TESRTesserakt extends TileEntitySpecialRenderer<TesseraktTile> {
 
 	private static final ResourceLocation END_SKY_TEXTURE = new ResourceLocation(Main.MODID,"textures/blocks/sky.png");
 	private static final ResourceLocation END_PORTAL_TEXTURE = new ResourceLocation(Main.MODID,"textures/blocks/field.png");
+	private static final ResourceLocation END_PORTAL_TEXTURE_1 = new ResourceLocation(Main.MODID,"textures/blocks/field_1.png");
 	private static Map<String,Float> pulseList= new HashMap<String,Float>();
 	Random rand = new Random();
 	@Override
 	public void render(TesseraktTile te, double x, double y, double z, float partialTicks, int destroyStage, float alpha) {
 		GlStateManager.disableFog();
 		boolean off = false;
+		boolean priv = false;
 		IBlockState st=te.getWorld().getBlockState(te.getPos());
 		if(st.getBlock() instanceof TesseraktBlock)
+		{
 			off = !st.getValue(TesseraktBlock.CONNECTED);
-		enderField(x,y-0.001,z,off,te.getPos().getX()+""+te.getPos().getY()+""+te.getPos().getZ());
+			priv = st.getValue(TesseraktBlock.PRIVATE);
+		}
+		enderField(x,y-0.001,z,off,te.getPos().getX()+""+te.getPos().getY()+""+te.getPos().getZ(),priv);
 	}
 
 
@@ -40,7 +45,7 @@ public class TESRTesserakt extends TileEntitySpecialRenderer<TesseraktTile> {
 
 	private static final FloatBuffer MODELVIEW = GLAllocation.createDirectFloatBuffer(16);
 	private static final FloatBuffer PROJECTION = GLAllocation.createDirectFloatBuffer(16);
-	public void enderField(double x,double y,double z,boolean off,String posCode)
+	public void enderField(double x,double y,double z,boolean off,String posCode,boolean privat)
 	{
 		//	GlStateManager.disableLighting();
 		RANDOM.setSeed(31100L);
@@ -65,6 +70,9 @@ public class TESRTesserakt extends TileEntitySpecialRenderer<TesseraktTile> {
 
 			if (j >= 1)
 			{
+				if(privat)
+					this.bindTexture(END_PORTAL_TEXTURE_1);
+				else
 				this.bindTexture(END_PORTAL_TEXTURE);
 				Minecraft.getMinecraft().entityRenderer.setupFogColor(true);
 			}

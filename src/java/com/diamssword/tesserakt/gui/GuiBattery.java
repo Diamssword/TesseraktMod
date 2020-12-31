@@ -22,9 +22,10 @@ public class GuiBattery extends GuiScreen {
 	private int xSize;
 	private int ySize;
 	private ExponentialBatteryTile tile;
+	private GuiIO guiio;
 	private int color;
 	public GuiBattery(ExponentialBatteryTile tile) {
-		super();
+		guiio = new GuiIO(tile,this,tile.getPos());
 		this.tile=tile;
 		this.xSize = 176;
 		this.ySize = 166;
@@ -37,6 +38,7 @@ public class GuiBattery extends GuiScreen {
 		super.initGui();
 		midX = (this.width - this.xSize) / 2;
 		midY = ((this.height - this.ySize) / 2)+20;
+		this.buttonList.add(guiio.getExternalButton(midX+155, midY+4));
 	}
 	public void drawDefaultBackground()
 	{
@@ -121,6 +123,7 @@ public class GuiBattery extends GuiScreen {
 	@Override
 	protected void actionPerformed(GuiButton button) throws IOException
 	{
+		guiio.checkAction(button);
 	}
 
 }

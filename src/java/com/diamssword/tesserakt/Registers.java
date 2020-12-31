@@ -10,6 +10,7 @@ import com.diamssword.tesserakt.blocks.ExponentialBatteryBlock;
 import com.diamssword.tesserakt.blocks.TesseraktBlock;
 import com.diamssword.tesserakt.items.BatteryPart;
 import com.diamssword.tesserakt.items.EnderStar;
+import com.diamssword.tesserakt.items.ItemSubBlock;
 import com.diamssword.tesserakt.tileentity.ExponentialBatteryTile;
 import com.diamssword.tesserakt.tileentity.FrameTile;
 import com.diamssword.tesserakt.tileentity.TesseraktTile;
@@ -88,7 +89,7 @@ public class Registers {
 		@SubscribeEvent
 		public static void registerItem(RegistryEvent.Register<Item> e)
 		{
-			e.getRegistry().register(new ItemBlock(blockTesserakt).setUnlocalizedName(blockTesserakt.getUnlocalizedName()).setRegistryName(blockTesserakt.getRegistryName()));
+			e.getRegistry().register(new ItemSubBlock(blockTesserakt,new String[] {"normal","private"}).setUnlocalizedName(blockTesserakt.getUnlocalizedName()).setRegistryName(blockTesserakt.getRegistryName()));
 			e.getRegistry().register(new ItemBlock(blockFrameEmpty).setUnlocalizedName(blockFrameEmpty.getUnlocalizedName()).setRegistryName(blockFrameEmpty.getRegistryName()));
 			e.getRegistry().register(new ItemBlock(blockFrameFull).setUnlocalizedName(blockFrameFull.getUnlocalizedName()).setRegistryName(blockFrameFull.getRegistryName()));
 			e.getRegistry().register(new ItemBlock(blockEnderWool).setUnlocalizedName(blockEnderWool.getUnlocalizedName()).setRegistryName(blockEnderWool.getRegistryName()));
@@ -108,6 +109,7 @@ public class Registers {
 		@SubscribeEvent
 		public static void registerModels(ModelRegistryEvent e) {
 			ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(blockTesserakt), 0, new ModelResourceLocation(blockTesserakt.getRegistryName(), "inventory"));
+			ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(blockTesserakt), 1, new ModelResourceLocation(blockTesserakt.getRegistryName(), "inventory_private"));
 			ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(blockFrameFull), 0, new ModelResourceLocation(blockFrameFull.getRegistryName(), "inventory"));
 			ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(blockFrameEmpty), 0, new ModelResourceLocation(blockFrameEmpty.getRegistryName(), "inventory"));
 			ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(blockEnderWool), 0, new ModelResourceLocation(blockEnderWool.getRegistryName(), "inventory"));

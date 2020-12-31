@@ -2,6 +2,7 @@ package com.diamssword.tesserakt.storage;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 import com.diamssword.tesserakt.Main;
 
@@ -16,6 +17,7 @@ public class TesseraktData extends WorldSavedData {
 	private static final String DATA_NAME = Main.MODID;
 	private NBTTagCompound tag= new NBTTagCompound();
 	public static Map<Integer,String> names;
+	public static Map<UUID,Map<Integer,String>> privatenames;
 	public static TesseraktData get(World world) {
 		MapStorage storage = world.getMapStorage();
 		TesseraktData instance = (TesseraktData) storage.getOrLoadData(TesseraktData.class, DATA_NAME);
@@ -54,27 +56,71 @@ public class TesseraktData extends WorldSavedData {
 	public static Map<Integer,String> getNames(World w)
 	{
 		if(names == null)
-			namesFromNBT(getNBT(w));
+			namesFromNBT(getNBT(w),false);
 		return names;
 	}
-	public static void namesFromNBT(NBTTagCompound nbt)
+	public static Map<Integer,String> getNamesFor(World w,UUID owner)
 	{
-		Map<Integer,String> map = new HashMap<Integer,String>();
-		NBTTagList list=(NBTTagList) nbt.getTag("names");
-		if(list != null)
+		if(privatenames == null)
+			namesFromNBT(getNBT(w),true);
+		Map<Integer,String> res= privatenames.get(owner);
+		if(res == null)
+			res= new HashMap<Integer,String>();
+		return res;
+	}
+	public static void namesFromNBT(NBTTagCompound nbt,boolean privateNames)
+	{
+		if(privateNames)
 		{
-			for(int i= 0;i< list.tagCount();i++)
+			Map<UUID,Map<Integer,String>> map = new HashMap<UUID,Map<Integer,String>>();
+			NBTTagList list=(NBTTagList) nbt.getTag("namesPrivate");
+			System.out.println(list);
+			if(list != null)
 			{
-				NBTTagCompound tag = (NBTTagCompound) list.get(i);
-				map.put(tag.getInteger("channel"),tag.getString("name"));
+				for(int i= 0;i< list.tagCount();i++)
+				{
+					NBTTagCompound tag = (NBTTagCompound) list.get(i);
+					String s =tag.getString("owner");
+					try {
+						UUID uuid=UUID.fromString(s);
+						NBTTagList list1=(NBTTagList) tag.getTag("names");
+						Map<Integer,String> namesOw=new HashMap<Integer,String>();
+						if(list1 != null)
+						{
+							for(int j= 0;j< list1.tagCount();j++)
+							{
+								NBTTagCompound tag1 = (NBTTagCompound) list1.get(j);
+								namesOw.put(tag1.getInteger("channel"),tag1.getString("name"));
+							}
+							map.put(uuid,namesOw);
+						}
+					}catch(IllegalArgumentException e)
+					{}
+
+
+				}
 			}
+			privatenames=map;
 		}
-		names=map;
+		else
+		{
+			Map<Integer,String> map = new HashMap<Integer,String>();
+			NBTTagList list=(NBTTagList) nbt.getTag("names");
+			if(list != null)
+			{
+				for(int i= 0;i< list.tagCount();i++)
+				{
+					NBTTagCompound tag = (NBTTagCompound) list.get(i);
+					map.put(tag.getInteger("channel"),tag.getString("name"));
+				}
+			}
+			names=map;
+		}
 	}
 	public static void addName(World w, int channel, String name, boolean remove)
 	{
 		if(names == null)
-			namesFromNBT(getNBT(w));
+			namesFromNBT(getNBT(w),false);
 		if(remove)
 			names.remove(channel);
 		else
@@ -91,10 +137,45 @@ public class TesseraktData extends WorldSavedData {
 		getNBT(w).setTag("names", list);
 		save(w);
 	}
+	public static void addNamePrivate(World w,UUID owner, int channel, String name, boolean remove)
+	{
+		if(privatenames == null)
+			namesFromNBT(getNBT(w),true);
+		Map<Integer,String> list=privatenames.get(owner);
+		if(list ==null)
+		{
+			privatenames.put(owner,list =new HashMap<Integer,String>());
+		}
+
+			if(remove)
+				list.remove(channel);
+			else
+				list.put(channel, name);
+			NBTTagList list1= new NBTTagList();
+			for(UUID owners : privatenames.keySet())
+			{
+				NBTTagCompound tag =new  NBTTagCompound();
+				tag.setString("owner", owners.toString());
+				NBTTagList list2= new NBTTagList();
+				for(Integer id : privatenames.get(owners).keySet())
+				{
+					NBTTagCompound tag1 =new  NBTTagCompound();
+					tag1.setInteger("channel", id);
+					tag1.setString("name", privatenames.get(owners).get(id));
+					list2.appendTag(tag1);
+				}
+				tag.setTag("names", list2);
+				list1.appendTag(tag);
+			}
+			
+			getNBT(w).setTag("namesPrivate", list1);
+			save(w);
+		
+	}
 	public static NBTTagCompound getDimBag(World w)
 	{
 		NBTTagCompound tag= (NBTTagCompound) getNBT(w);
-		
+
 		if(!tag.hasKey("bags"))
 			tag.setTag("bags", new NBTTagCompound());
 		return (NBTTagCompound) tag.getTag("bags");

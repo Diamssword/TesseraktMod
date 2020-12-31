@@ -1,14 +1,19 @@
 package com.diamssword.tesserakt.blocks;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import javax.annotation.Nullable;
 
+import com.diamssword.tesserakt.Configs;
+import com.diamssword.tesserakt.Configs.LockItem;
 import com.diamssword.tesserakt.Main;
 import com.diamssword.tesserakt.Registers;
 import com.diamssword.tesserakt.WrenchsCompat;
 import com.diamssword.tesserakt.storage.TesseraktData;
 import com.diamssword.tesserakt.tileentity.TesseraktTile;
+import com.diamssword.tesserakt.utils.IIngredientDisplay;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
@@ -25,13 +30,15 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-public class TesseraktBlock extends Block{
+public class TesseraktBlock extends Block  implements IIngredientDisplay{
 	public static PropertyBool CONNECTED = PropertyBool.create("connected");
+	public static PropertyBool PRIVATE = PropertyBool.create("private");
 	public TesseraktBlock() {
 		super(Material.IRON);
 		this.setRegistryName("tesserakt");	
@@ -51,18 +58,38 @@ public class TesseraktBlock extends Block{
 			{
 				int chan =stack.getTagCompound().getInteger("channel");
 				tooltip.add("Frequency : "+ chan);
-				if(TesseraktData.names != null && !TesseraktData.names.isEmpty())
+				if(stack.getItemDamage()!=1)
 				{
-					String s =TesseraktData.names.get(chan);
-					if(s != null)
+					if(TesseraktData.names != null && !TesseraktData.names.isEmpty())
 					{
-						tooltip.add("Label : "+ s);
+						String s =TesseraktData.names.get(chan);
+						if(s != null)
+						{
+							tooltip.add("Label : "+ s);
+						}
 					}
 				}
-
 			}
 			tooltip.add("Transfer stuff across any distance and dimensions");
+			if(stack.getItemDamage()!=1)
+			{
+				tooltip.add("" );
+				tooltip.add("Privatize by clicking the block with :" );
+				for(LockItem st : Configs.locksItems)
+				{
+					ItemStack displayer=null;
+					if(st.meta ==-1)
+						displayer =new ItemStack(st.item,1,0);
+					else
+						displayer=new ItemStack(st.item,1,st.meta);
+					tooltip.add("-"+displayer.getDisplayName());
+				}
+			}
 		}
+	}
+	public IBlockState getStateForPlacement(World worldIn, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer)
+	{
+		return this.getDefaultState().withProperty(PRIVATE, meta !=0);
 	}
 	public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ)
 	{
@@ -72,8 +99,8 @@ public class TesseraktBlock extends Block{
 			{
 				if(worldIn.setBlockToAir(pos))
 				{
-			        NonNullList<ItemStack> ret = NonNullList.create();
-			        this.getDrops(ret,worldIn, pos, state, 0);
+					NonNullList<ItemStack> ret = NonNullList.create();
+					this.getDrops(ret,worldIn, pos, state, 0);
 					for(ItemStack drop : ret)
 						Block.spawnAsEntity(worldIn, pos, drop);
 				}
@@ -83,10 +110,50 @@ public class TesseraktBlock extends Block{
 		if(!worldIn.isRemote)
 		{
 			worldIn.notifyBlockUpdate(pos,state, state, 3);
+			if(!state.getValue(PRIVATE))
+			{
+				ItemStack st = playerIn.getHeldItem(hand);
+				if(st != null)
+				{
+					for(LockItem i : Configs.locksItems)
+					{
+						if(st.getItem() == i.item)
+						{
+							if(i.meta ==-1 || i.meta == st.getItemDamage())
+							{
+								st.shrink(1);
+								worldIn.setBlockState(pos, state.withProperty(PRIVATE, true));
+								TileEntity te =worldIn.getTileEntity(pos);
+								if(te != null && te instanceof TesseraktTile)
+								{
+									TesseraktTile tile = (TesseraktTile) te;
+									if(worldIn.getBlockState(pos).getValue(PRIVATE))
+									{
+										tile.setOwner(playerIn.getUniqueID());
+									}
+								}
+								return true;
+							}
+						}
+					}
+				}
+			}
 
 		}
-		else
+		else 
 		{
+			if(state.getValue(PRIVATE))
+			{
+				TesseraktTile t =this.getTileEntity(worldIn, pos);
+				UUID id =t.getOwner();
+				if(id != null && id.equals(playerIn.getUniqueID()))
+				{
+					playerIn.openGui(Main.instance, 1, worldIn, pos.getX(), pos.getY(), pos.getZ());
+					return true;
+				}
+				playerIn.sendStatusMessage(new TextComponentTranslation(Main.MODID+".text.private.tesserakt"), true);
+				return false;
+			}
 			playerIn.openGui(Main.instance, 1, worldIn, pos.getX(), pos.getY(), pos.getZ());
 		}
 
@@ -143,18 +210,18 @@ public class TesseraktBlock extends Block{
 	@Override
 	public BlockStateContainer createBlockState()
 	{
-		return new BlockStateContainer(this, CONNECTED);
+		return new BlockStateContainer(this, CONNECTED,PRIVATE);
 	}
 	@Override
 	public IBlockState getStateFromMeta(int meta)
 	{
-		return this.getDefaultState();
+		return this.getDefaultState().withProperty(PRIVATE, meta!=0);
 	}
 
 	@Override
 	public int getMetaFromState(IBlockState state)
 	{
-		return 0;
+		return state.getValue(PRIVATE) ? 1:0;
 	}
 	public void onBlockPlacedBy(World worldIn, BlockPos pos, IBlockState state, EntityLivingBase placer, ItemStack stack)
 	{
@@ -163,6 +230,10 @@ public class TesseraktBlock extends Block{
 		{
 			TesseraktTile tile = (TesseraktTile) te;
 			tile.fromItemNBT(stack);
+			if(worldIn.getBlockState(pos).getValue(PRIVATE))
+			{
+				tile.setOwner(placer.getUniqueID());
+			}
 		}
 	}
 
@@ -229,5 +300,21 @@ public class TesseraktBlock extends Block{
 	public boolean canProvidePower(IBlockState state)
 	{
 		return true;
+	}
+	@Override
+	public ItemStack[][] toDisplay(IBlockState state) {
+		if(!state.getValue(PRIVATE))
+		{
+			List<ItemStack[]> stacks= new ArrayList<ItemStack[]>();
+			for(LockItem it:Configs.locksItems)
+			{
+				int meta= it.meta;
+						if(meta ==-1)
+							meta = 0;
+				stacks.add(new ItemStack[] {new ItemStack(it.item,1,meta)});
+			}
+			return stacks.toArray(new ItemStack[0][0]);
+		}
+		return new ItemStack[0][0];
 	}
 }

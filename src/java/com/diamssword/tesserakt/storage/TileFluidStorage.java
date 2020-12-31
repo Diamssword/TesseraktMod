@@ -72,6 +72,7 @@ public class TileFluidStorage implements IFluidTank, IFluidHandler
 	@Override
 	public IFluidTankProperties[] getTankProperties()
 	{
+		TileFluidStorage parent = this;
 		if (this.tankProperties == null)
 		{
 			this.tankProperties = new IFluidTankProperties[] { new IFluidTankProperties() {
@@ -82,23 +83,23 @@ public class TileFluidStorage implements IFluidTank, IFluidHandler
 				}
 				@Override
 				public int getCapacity() {
-					return this.getCapacity();
+					return parent.getCapacity();
 				}
 				@Override
 				public boolean canFill() {
-					return input;
+					return parent.input;
 				}
 				@Override
 				public boolean canDrain() {
-					return output;
+					return parent.output;
 				}
 				@Override
 				public boolean canFillFluidType(FluidStack fluidStack) {
-					return canFillFluidType(fluidStack);
+					return parent.canFillFluidType(fluidStack);
 				}
 				@Override
 				public boolean canDrainFluidType(FluidStack fluidStack) {
-					return canDrainFluidType(fluidStack);
+					return parent.canDrainFluidType(fluidStack);
 				}} };
 		}
 		return this.tankProperties;

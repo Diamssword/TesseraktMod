@@ -3,7 +3,9 @@ package com.diamssword.tesserakt.gui;
 import java.awt.Color;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.diamssword.tesserakt.Main;
 import com.diamssword.tesserakt.dimensional_bag.DimBagControllerTile;
@@ -96,21 +98,28 @@ public class GuiDimBagController extends GuiScreen {
 	{
 		this.drawDefaultBackground();
 		super.drawScreen(mouseX, mouseY, partialTicks);
-		if(TesseraktData.names != null)
+		Map<Integer,String> names = new HashMap<Integer,String>();
+		if(tile.getOwner() != null)
 		{
-			Integer[] keys =TesseraktData.names.keySet().toArray(new Integer[0]);
-			for(int i = offset;i<offset+10;i++)
-			{
-				if(i>=keys.length) break;
-			//	if(keys[i].equals(tile.getChannel()))
-				{
-
-					mc.getTextureManager().bindTexture(BG_TEXTURE);
-					drawTexturedModalRect(midX+8, midY+70+(10*(i-offset))-1, 0, 166, 128, 10);
-				}
-				this.drawString(this.fontRenderer, TesseraktData.names.get(keys[i]), midX+9, midY+70+(10*(i-offset)), Color.white.getRGB());
-			}
+			Map<Integer,String> map1=TesseraktData.privatenames.get(tile.getOwner());
+			if(map1 ==null)
+				map1= new HashMap<Integer,String>();
+			names=map1;
 		}
+		else
+		{
+			names=TesseraktData.names;
+		}
+
+		Integer[] keys =names.keySet().toArray(new Integer[0]);
+		for(int i = offset;i<offset+10;i++)
+		{
+			if(i>=keys.length) break;
+			mc.getTextureManager().bindTexture(BG_TEXTURE);
+			drawTexturedModalRect(midX+8, midY+70+(10*(i-offset))-1, 0, 166, 128, 10);
+			this.drawString(this.fontRenderer, names.get(keys[i]), midX+9, midY+70+(10*(i-offset)), Color.white.getRGB());
+		}
+
 		if(color >509)
 			color=0;
 		else
@@ -121,14 +130,14 @@ public class GuiDimBagController extends GuiScreen {
 			col = 255-(color-255);
 		String name = I18n.format("tile.tesserakt.dim_bag_controller.name");
 		this.drawString(this.fontRenderer, name, midX+5, midY+20,new Color(3,col,252).getRGB());
-		
+
 		GuiDimBagController.drawRect(midX+90, midY+112, midX+120, midY+142, new Color(red.getValueInt(),green.getValueInt(),blue.getValueInt()).getRGB());
 	}
 
 	@Override
 	protected void actionPerformed(GuiButton button) throws IOException
 	{
-		
+
 		if(button.id == 2) //disable
 		{
 			Main.network.sendToServer(new PacketSendEnable(0,false,this.tile.getPos()));
@@ -143,7 +152,7 @@ public class GuiDimBagController extends GuiScreen {
 		{
 			this.offset++;
 		}
-	
+
 	}
 	protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException
 	{

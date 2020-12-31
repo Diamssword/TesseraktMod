@@ -10,9 +10,12 @@ import com.diamssword.tesserakt.Main;
 import com.diamssword.tesserakt.tileentity.ExponentialBatteryTile;
 import com.diamssword.tesserakt.tileentity.TesseraktTile;
 
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.EntityRenderer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
+import net.minecraft.entity.Entity;
 import net.minecraft.util.ResourceLocation;
 
 public class TESRExponentialBattery extends TileEntitySpecialRenderer<ExponentialBatteryTile> {
@@ -72,9 +75,26 @@ public class TESRExponentialBattery extends TileEntitySpecialRenderer<Exponentia
 		GlStateManager.enableLighting();
 		GL11.glEnable(GL11.GL_LIGHTING);
 		GL11.glPopMatrix();
+		if(Minecraft.getMinecraft().player.isSneaking())
+		{
+		this.drawNameplate(te, "North", x, y+0.5, z-0.501,0,0);
+		this.drawNameplate(te, "South", x, y+0.5, z+0.501,180,0);
+		this.drawNameplate(te, "West", x-0.501, y+0.5, z,-90,0);
+		this.drawNameplate(te, "East", x+0.501, y+0.5, z,90,0);
+		}
 
 	
 	}
+    protected void drawNameplate(ExponentialBatteryTile te, String str, double x, double y, double z,float roty,float rotx)
+    {
+        Entity entity = this.rendererDispatcher.entity;
+        double d0 = te.getDistanceSq(entity.posX, entity.posY, entity.posZ);
+
+        if (d0 <= (double)(5 * 5))
+        {
+            EntityRenderer.drawNameplate(this.getFontRenderer(), str, (float)x + 0.5F, (float)y + 0.5F, (float)z + 0.5F, 0, roty, rotx, false, false);
+        }
+    }
 	public static int[] colorForLevel(int i)
 	{
 		switch(i)

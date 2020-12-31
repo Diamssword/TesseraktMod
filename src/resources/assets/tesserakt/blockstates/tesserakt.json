@@ -7,8 +7,15 @@
     "inventory": [{"submodel":"tesserakt:tesserakt_inside","textures": {
 				"fluid": "tesserakt:blocks/fluid_sky"
 			}}],
+  "inventory_private": [{"submodel":"tesserakt:tesserakt_inside","textures": {
+				"fluid": "tesserakt:blocks/fluid_sky_1"
+			}}],		
 	"connected": {
 	"false" : {"textures": {"0": "tesserakt:blocks/tesserakt_off"}},
+	"true" : {}
+	},
+	"private": {
+	"false" : {},
 	"true" : {}
 	}
   }

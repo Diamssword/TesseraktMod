@@ -31,7 +31,11 @@ public class PacketSendNames implements IMessage {
 
 		@Override
 		public IMessage onMessage(PacketSendNames message, MessageContext ctx) {
-			TesseraktData.namesFromNBT(message.tag);
+			System.out.println(message.tag);
+			if(message.tag.hasKey("private"))
+				TesseraktData.namesFromNBT(message.tag,true);	
+			else
+			TesseraktData.namesFromNBT(message.tag,false);
 			return null;
 
 		}
