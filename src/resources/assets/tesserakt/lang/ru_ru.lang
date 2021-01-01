@@ -1,0 +1,25 @@
+
+language.name=Russian
+language.region=Russia
+language.code=ru_ru
+itemGroup.tesserakt=Тессеракт
+tile.tesserakt.tesserakt.normal.name=Тессеракт
+tile.tesserakt.tesserakt.private.name=Тессеракт (частный)
+tile.tesserakt.frame_empty.name=Рамка тессеракта (пустая)
+tile.tesserakt.frame_full.name=Рамка тессеракта (полная)
+death.attack.dimensional_squish=%s был размерно раздавлен!
+item.tesserakt.dimensional_bag.name=Пространственная сумка
+item.tesserakt.ender_star.name=Звезда Края
+item.tesserakt.battery_part.name=Аккумуляторная черная дыра
+tile.tesserakt.dim_bag_wall_block.name=Пространственный холст
+tile.tesserakt.dim_bag_controller.name=Пространственный контроллер сумки
+tile.tesserakt.dim_bag_telporter.name=Пространственный портал
+tile.tesserakt.ender_wool.name=Шерсть Края
+tile.tesserakt.exponential_battery.name=Экспоненциальный аккумулятор
+tesserakt.bag_craft.error=Хм... Я должен попытаться окружить блок обсидианом
+tesserakt.room_upgrade.error=Мне необходимо %d звезд Края
+tesserakt.battery.info=Аккумулятор постоянно растет: когда аккумулятор полностью заряжен, избыточная энергия переходит на правую шкалу, когда правая шкала заполнена, общая емкость памяти и ввода-вывода удваивается.\nСломав его, вы потеряете весь накопленный потенциал
+tesserakt.dim_bag.info=Создается путем заполнения полного каркаса тессеракта шерстью Края, окруженным блоком обсидианом и использования на нем адской звезды\nЛучший друг путешественника!\nПКМ, чтобы открыть карманное измерение, содержащееся в сумке, снова ПКМ на помещенной сумке, чтобы войти снова, или используйте красный камень, чтобы оставить его открытым.\nВы можете улучшить внутреннюю комнату, щелкнув панель управления со звездой Края.
+tesserakt.tesserakt.info=Передача предметов, жидкостей, редстоуна и энергии по беспроводной сети через измерения.\nВы можете выбрать любую частоту между 0 и 999 и привязать другой тессеракт к той же частоте, чтобы установить соединение.
+tesserakt.battery_part.info=Создается путем заполнения полной рамки тессеракта редстойн блоком с последующим использованием на нем звезды Края.
+tesserakt.text.private.tesserakt=Вы не являетесь владельцем этого тессеракта
